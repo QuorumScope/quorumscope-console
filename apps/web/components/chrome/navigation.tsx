@@ -1,24 +1,14 @@
 import Link from 'next/link';
 import { Mark } from '../brand/mark';
+import { NavLinks } from './nav-links';
 import { ThemeSwitcher } from './theme-switcher';
-
-const links = [
-  ['/', 'Overview'],
-  ['/network', 'Network'],
-  ['/keys', 'Frozen keys'],
-  ['/incidents', 'Freeze episodes'],
-  ['/status', 'Status'],
-  ['/developers', 'Developers'],
-] as const;
 
 export function Navigation() {
   return (
     <header className="site-header">
       <div className="header-inner">
         <Link className="brand" href="/" aria-label="QuorumScope overview"><Mark /><span>QuorumScope</span></Link>
-        <nav aria-label="Main navigation" className="nav-links">
-          {links.map(([href, label]) => <Link key={href} href={href}>{label}</Link>)}
-        </nav>
+        <NavLinks />
         <ThemeSwitcher />
       </div>
     </header>
