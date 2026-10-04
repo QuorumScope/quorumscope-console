@@ -63,6 +63,14 @@ h2 { letter-spacing: -.025em; line-height: 1.18; }
 .data-error h2 { margin: 0 0 8px; }
 .data-error p { margin: 0; }
 .muted { color: var(--text-2); }
+.record-list { list-style: none; padding: 0; margin: 0; }
+.record { padding: 19px 0; border-bottom: 1px solid var(--border-1); }
+.record:first-child { padding-top: 0; }
+.record-title { font-weight: 700; overflow-wrap: anywhere; }
+.record-facts { display: flex; gap: 14px 32px; flex-wrap: wrap; margin: 14px 0 0; }
+.record-facts dt { color: var(--text-2); font-size: .77rem; text-transform: uppercase; letter-spacing: .06em; }
+.record-facts dd { margin: 3px 0 0; overflow-wrap: anywhere; }
+.pagination { display: flex; justify-content: space-between; gap: 16px; padding-top: 20px; font-weight: 700; }
 
 @media (max-width: 720px) {
   .header-inner { align-items: flex-start; flex-direction: column; gap: 12px; padding-block: 16px; }

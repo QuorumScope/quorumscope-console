@@ -4,6 +4,7 @@ import { Mark } from '../brand/mark';
 const links = [
   ['/', 'Overview'],
   ['/network', 'Network'],
+  ['/keys', 'Frozen keys'],
   ['/status', 'Status'],
 ] as const;
 
