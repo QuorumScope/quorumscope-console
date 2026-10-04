@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { Fact } from '../../components/data/fact';
 import { DataError } from '../../components/feedback/data-error';
 import { engineClient, errorMessage, load } from '../../lib/api';
@@ -32,6 +33,7 @@ export default async function NetworkPage() {
         <Fact label="Latest reported ledger">{freeze.data.latest_ledger ?? 'Not reported'}</Fact>
       </dl>
       <p className="muted">Protocol version, verified compatibility, and source close time are not present in this engine response.</p>
+      <p><Link href="/bypasses">Inspect active bypass evidence</Link></p>
     </section> : <DataError title="Freeze state unavailable" message={errorMessage(freeze.error)} />}
   </>;
 }
