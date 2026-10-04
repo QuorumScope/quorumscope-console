@@ -1,20 +1,22 @@
 {
   "name": "quorumscope-console",
   "private": true,
-  "packageManager": "pnpm@12.8.2",
+  "packageManager": "pnpm@12.9.1",
   "engines": {
     "node": ">=24.21.0 <25"
   },
   "scripts": {
-    "dev": "pnpm --filter @quorumscope/sdk build && pnpm --filter @quorumscope/web dev",
-    "build": "pnpm --filter @quorumscope/sdk build && pnpm --filter @quorumscope/web build",
-    "lint": "node scripts/check-prose.mjs && pnpm --filter @quorumscope/web lint",
-    "typecheck": "node scripts/verify-openapi.mjs && pnpm --filter @quorumscope/sdk typecheck && pnpm --filter @quorumscope/sdk build && pnpm --filter @quorumscope/web typecheck",
-    "test": "node --test tests/*.test.mjs && pnpm --filter @quorumscope/sdk test",
+    "dev": "corepack pnpm --filter @quorumscope/sdk build && corepack pnpm --filter @quorumscope/web dev",
+    "build": "corepack pnpm --filter @quorumscope/sdk build && corepack pnpm --filter @quorumscope/web build",
+    "lint": "node scripts/check-prose.mjs && corepack pnpm --filter @quorumscope/web lint",
+    "typecheck": "node scripts/verify-openapi.mjs && corepack pnpm --filter @quorumscope/sdk typecheck && corepack pnpm --filter @quorumscope/sdk build && corepack pnpm --filter @quorumscope/web typecheck",
+    "test": "node --test tests/*.test.mjs && corepack pnpm --filter @quorumscope/sdk test",
     "openapi:fetch": "node scripts/fetch-openapi.mjs",
+    "openapi:generate": "openapi-typescript packages/sdk/openapi/quorumscope-engine-v1.json -o packages/sdk/src/generated/openapi.ts",
     "openapi:check": "node scripts/verify-openapi.mjs"
   },
   "devDependencies": {
-    "typescript": "6.0.3"
+    "openapi-typescript": "7.13.0",
+    "typescript": "5.9.3"
   }
 }

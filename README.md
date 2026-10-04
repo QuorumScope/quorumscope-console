@@ -8,14 +8,15 @@ The interface supports light, dark, and system themes. The theme choice is the o
 
 ## Current checks
 
-With Node 24.21.0 and pnpm 12.8.2:
+With Node 24.21.0 and Corepack using pnpm 12.9.1:
 
 ```sh
-pnpm install
-pnpm lint
-pnpm typecheck
-pnpm test
-pnpm build
+corepack pnpm install --frozen-lockfile
+corepack pnpm lint
+corepack pnpm typecheck
+corepack pnpm test
+corepack pnpm build
+corepack pnpm openapi:check
 ```
 
 See [API contract](docs/api-contract.md) and [version verification](docs/versions.md) for the current blockers and source details.

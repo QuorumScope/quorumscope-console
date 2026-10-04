@@ -1,22 +1,23 @@
 # Version verification
 
-Verified 2026-10-04 12:10 UTC. The package registry timed out from this workspace, so package compatibility and installation are still unverified. Feature implementation must wait for the scaffold gate in the Phase 7 prompt.
+Verified on 2026-10-04 between 16:03 and 16:10 UTC using the npm registry, Node release page, installed CLIs, peer dependency check, and workspace build. Every direct dependency is pinned exactly in its package manifest.
 
-| Tool or package | Observed version | Source | Status | Check |
-| --- | --- | --- | --- | --- |
-| Node.js | 24.21.0 | Local `node --version` and [Node release status](https://nodejs.org/en/about/previous-releases) | Node 24 is LTS | Runtime starts locally |
-| pnpm | 12.8.2 | Local `pnpm --version` | Installed locally; registry status not confirmed | CLI starts locally |
-| Next.js | 16.3.8 | [npm package page](https://www.npmjs.com/package/next) | Latest stable observed | Not installed in this repository |
-| React and React DOM | 19.3.0 | [React](https://www.npmjs.com/package/react), [React DOM](https://www.npmjs.com/package/react-dom) | Latest stable observed | Not installed in this repository |
-| TypeScript | 6.0.3 selected | [npm package page](https://www.npmjs.com/package/typescript) and local package store | 7.0.2 is latest stable observed | The local Next.js stack has been typechecked with 6.0.3. Compatibility of 7.0.2 is not yet verified, so it was not selected. |
-| Tailwind CSS | 4.3.3 | [npm package page](https://www.npmjs.com/package/tailwindcss) | Latest stable observed | Not installed in this repository |
-| Vitest | 5.0.3 | [npm package page](https://www.npmjs.com/package/vitest) | Latest stable observed | Not installed in this repository |
-| openapi-typescript | 7.13.0 used for generation | [npm package page](https://www.npmjs.com/package/openapi-typescript) and local installed copy | Latest stable observed | The generator ran against the checked-in engine schema. Registry metadata is unavailable, so it is not yet a reproducible direct dependency here. |
-| Next.js ESLint config | 16.3.8 selected | [npm package page](https://www.npmjs.com/package/eslint-config-next) and local package store | Stable local version | Scaffold lint passed |
-| ESLint | 9.39.5 selected | [npm package page](https://www.npmjs.com/package/eslint) and local package store | Installed local version | Scaffold lint passed; newer 10.11.0 remains to be checked for compatibility |
-| Node types | 24.10.4 selected | [npm package page](https://www.npmjs.com/package/@types/node) and local package store | Installed local version | Scaffold typecheck passed |
-| React types | 19.2.14 selected | [npm package page](https://www.npmjs.com/package/@types/react) and local package store | Installed local version | Scaffold typecheck passed |
-| React DOM types | 19.2.3 selected | [npm package page](https://www.npmjs.com/package/@types/react-dom) and local package store | Installed local version | Scaffold typecheck passed |
-| Tailwind PostCSS | 4.3.3 selected | [npm package page](https://www.npmjs.com/package/@tailwindcss/postcss) and local package store | Stable local version | Offline install passed |
+| Direct tool or package | Selected | Authoritative source | Release status and compatibility |
+| --- | --- | --- | --- |
+| Node.js | 24.21.0 | [Node releases](https://nodejs.org/en/about/previous-releases) | Node 24 is LTS. Next.js and pnpm engine ranges accept it. Runtime verified locally. |
+| pnpm | 12.9.1 | [npm pnpm](https://www.npmjs.com/package/pnpm) | Current stable registry release. Verified through Corepack. |
+| Next.js | 16.3.8 | [npm next](https://www.npmjs.com/package/next) | Current stable registry release. Production build passed. |
+| React | 19.3.0 | [npm react](https://www.npmjs.com/package/react) | Current stable registry release. Next.js production build passed. |
+| React DOM | 19.3.0 | [npm react-dom](https://www.npmjs.com/package/react-dom) | Current stable registry release. Matches React. |
+| TypeScript | 5.9.3 | [npm typescript](https://www.npmjs.com/package/typescript) | Newest compatible stable line for all current peers. Version 7.0.2 is newer, but openapi-typescript 7.13.0 requires TypeScript 5.x. TypeScript ESLint 8.71.0 requires a version below 6.1. |
+| openapi-typescript | 7.13.0 | [npm openapi-typescript](https://www.npmjs.com/package/openapi-typescript) | Current stable registry release. Generation and drift check passed. |
+| Tailwind CSS | 4.3.3 | [npm tailwindcss](https://www.npmjs.com/package/tailwindcss) | Current stable registry release. Production build passed. |
+| Tailwind PostCSS | 4.3.3 | [npm @tailwindcss/postcss](https://www.npmjs.com/package/@tailwindcss/postcss) | Current stable registry release. Matches Tailwind. |
+| ESLint | 9.39.5 | [npm eslint](https://www.npmjs.com/package/eslint) | Newest compatible major line for the selected Next.js config. Version 10.12.0 conflicts with peer ranges of eslint-plugin-import, eslint-plugin-jsx-a11y, and eslint-plugin-react. Lint passed with 9.39.5. |
+| Next.js ESLint config | 16.3.8 | [npm eslint-config-next](https://www.npmjs.com/package/eslint-config-next) | Matches Next.js. Peer check and lint passed. |
+| Node types | 24.19.1 | [npm @types/node](https://www.npmjs.com/package/@types/node) | Latest published Node 24 type release observed. Matches runtime major. |
+| React types | 19.3.0 | [npm @types/react](https://www.npmjs.com/package/@types/react) | Current stable registry release. Typecheck passed. |
+| React DOM types | 19.3.0 | [npm @types/react-dom](https://www.npmjs.com/package/@types/react-dom) | Current stable registry release. Typecheck passed. |
+| Workspace SDK | workspace:* | Local `packages/sdk` | Internal workspace dependency, not a registry release. SDK builds and its compiled import passed. |
 
-All selected direct dependencies are pinned in package manifests. The offline lockfile install, scaffold lint, SDK typecheck, and SDK tests pass. The local pnpm version is pinned for reproducibility, but the registry's cached page showed 12.8.1. This discrepancy requires a fresh registry check when connectivity returns.
+`corepack pnpm peers check` reported no peer dependency issues. The exact lockfile is committed. The root Node engine range is limited to the verified Node 24 line.

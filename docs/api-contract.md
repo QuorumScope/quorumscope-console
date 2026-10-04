@@ -8,4 +8,4 @@ The current schema does not expose `/api/v1/preflight` or `/api/v1/impact`. It a
 
 The actual error envelope contains `error.code`, `error.message`, and a top-level `request_id`. It does not declare `error.details`. Client error handling must follow this shape.
 
-Run `QUORUMSCOPE_ENGINE_OPENAPI_SOURCE=/path/to/engine/openapi/openapi.json pnpm openapi:fetch` to refresh the source snapshot, then `pnpm openapi:check` to verify its expected identity and endpoints. A generated TypeScript type drift check still needs `openapi-typescript` after package installation works.
+Run `QUORUMSCOPE_ENGINE_OPENAPI_SOURCE=/path/to/engine/openapi/openapi.json pnpm openapi:fetch` to refresh the source snapshot, then `pnpm openapi:generate` to regenerate types and `pnpm openapi:check` to verify that committed types match. The drift check also verifies the snapshot identity and expected read endpoints.
