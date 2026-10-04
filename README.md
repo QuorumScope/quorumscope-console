@@ -4,6 +4,8 @@ This repository is the frontend and TypeScript SDK workspace for QuorumScope. Th
 
 The SDK implements the current engine read endpoints. The web console has overview, network, status, frozen-key, freeze-episode, and developer pages. The site is not deployed. The checked-in engine OpenAPI snapshot does not expose preflight or impact.
 
+The interface supports light, dark, and system themes. The theme choice is the only preference saved in browser storage.
+
 ## Current checks
 
 With Node 24.21.0 and pnpm 12.8.2:

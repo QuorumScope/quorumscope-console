@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Mark } from '../brand/mark';
+import { ThemeSwitcher } from './theme-switcher';
 
 const links = [
   ['/', 'Overview'],
@@ -18,6 +19,7 @@ export function Navigation() {
         <nav aria-label="Main navigation" className="nav-links">
           {links.map(([href, label]) => <Link key={href} href={href}>{label}</Link>)}
         </nav>
+        <ThemeSwitcher />
       </div>
     </header>
   );

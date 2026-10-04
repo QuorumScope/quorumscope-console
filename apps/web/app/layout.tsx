@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
+import Script from 'next/script';
 import { Navigation } from '../components/chrome/navigation';
 import './globals.css';
 
@@ -10,7 +11,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
+      <head><Script src="/theme-init.js" strategy="beforeInteractive" /></head>
       <body>
         <a className="skip-link" href="#main">Skip to content</a>
         <Navigation />
