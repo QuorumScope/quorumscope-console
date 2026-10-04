@@ -13,9 +13,12 @@
     "test": "node --test tests/*.test.mjs && corepack pnpm --filter @quorumscope/sdk test",
     "openapi:fetch": "node scripts/fetch-openapi.mjs",
     "openapi:generate": "openapi-typescript packages/sdk/openapi/quorumscope-engine-v1.json -o packages/sdk/src/generated/openapi.ts",
-    "openapi:check": "node scripts/verify-openapi.mjs"
+    "openapi:check": "node scripts/verify-openapi.mjs",
+    "e2e": "playwright test"
   },
   "devDependencies": {
+    "@axe-core/playwright": "4.13.0",
+    "@playwright/test": "1.63.0",
     "openapi-typescript": "7.13.0",
     "typescript": "5.9.3"
   }
