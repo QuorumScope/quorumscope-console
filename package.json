@@ -1,0 +1,20 @@
+{
+  "name": "quorumscope-console",
+  "private": true,
+  "packageManager": "pnpm@12.8.2",
+  "engines": {
+    "node": ">=24.21.0 <25"
+  },
+  "scripts": {
+    "dev": "pnpm --filter @quorumscope/web dev",
+    "build": "pnpm --filter @quorumscope/web build",
+    "lint": "node scripts/check-prose.mjs && pnpm --filter @quorumscope/web lint",
+    "typecheck": "node scripts/verify-openapi.mjs && pnpm --filter @quorumscope/sdk typecheck && pnpm --filter @quorumscope/web typecheck",
+    "test": "node --test tests/*.test.mjs",
+    "openapi:fetch": "node scripts/fetch-openapi.mjs",
+    "openapi:check": "node scripts/verify-openapi.mjs"
+  },
+  "devDependencies": {
+    "typescript": "6.0.3"
+  }
+}
