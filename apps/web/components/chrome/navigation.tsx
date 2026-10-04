@@ -3,6 +3,8 @@ import { Mark } from '../brand/mark';
 
 const links = [
   ['/', 'Overview'],
+  ['/network', 'Network'],
+  ['/status', 'Status'],
 ] as const;
 
 export function Navigation() {

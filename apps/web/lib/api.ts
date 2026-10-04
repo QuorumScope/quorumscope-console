@@ -12,3 +12,11 @@ export function errorMessage(error: unknown): string {
   }
   return 'Current engine state could not be retrieved. Try again when the API is available.';
 }
+
+export async function load<T>(get: () => Promise<T>): Promise<{ data: T; error?: never } | { data?: never; error: unknown }> {
+  try {
+    return { data: await get() };
+  } catch (error) {
+    return { error };
+  }
+}
