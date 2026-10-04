@@ -9,3 +9,5 @@ This was a browser smoke check, not an accessibility certification. Automated ax
 After the mobile navigation change, a production build was checked in Chromium at 375 pixels. The menu opened, its frozen-key link navigated to `/keys`, the unavailable state rendered, and no page errors or horizontal document overflow were observed.
 
 The CI quality job runs a frozen install, OpenAPI drift check, lint, typecheck, unit tests, production build, and a high-severity production dependency audit. The full development dependency audit currently reports one high-severity `braces` advisory through `eslint-config-next` and `fast-glob`. The advisory has no patched `braces` release listed, and the production dependency audit reports no known vulnerabilities. This review does not mean the development dependency advisory is resolved.
+
+The first GitHub CI quality run completed successfully on 2026-10-04. After the error and health-route change, local lint and production build passed, and a local production server returned HTTP 200 with `{"status":"web_ready"}` from `/api/health`.

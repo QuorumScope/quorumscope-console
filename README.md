@@ -6,6 +6,8 @@ The SDK implements the current engine read endpoints. The web console has overvi
 
 The interface supports light, dark, and system themes. The theme choice is the only preference saved in browser storage.
 
+`/api/health` reports whether the web process can answer HTTP requests. It does not assert engine or network health. Use `/status` for engine-reported status when an API origin is configured.
+
 ## Current checks
 
 With Node 24.21.0 and Corepack using pnpm 12.9.1:
