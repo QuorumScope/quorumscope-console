@@ -27,3 +27,7 @@ The SDK is a private workspace package until its publication process is complete
 Its build emits JavaScript and TypeScript declarations in `packages/sdk/dist`. `pnpm build` builds the SDK before the web app.
 
 Copy `.env.example` to `apps/web/.env.local` and set `NEXT_PUBLIC_QUORUMSCOPE_API_BASE_URL` to a real engine origin. Without it, the overview displays an explicit unavailable state.
+
+## More documentation
+
+[Architecture](docs/architecture.md), [data freshness](docs/data-freshness.md), [deployment](docs/deployment.md), [testing](docs/testing.md), [contributing](CONTRIBUTING.md), and [security](SECURITY.md).
