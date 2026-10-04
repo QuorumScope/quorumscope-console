@@ -51,6 +51,7 @@ export function createRequester(options: ClientOptions) {
       method: 'GET',
       headers: { Accept: 'application/json', ...headers },
       signal: requestOptions.signal,
+      cache: 'no-store',
     });
     let body: unknown;
     try {
