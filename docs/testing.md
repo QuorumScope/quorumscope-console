@@ -7,3 +7,5 @@ The local development server was checked with Playwright 1.63.0 and Chromium. Th
 This was a browser smoke check, not an accessibility certification. Automated axe scans, full keyboard flow checks, deterministic backend fixture E2E tests, and visual baselines remain open.
 
 After the mobile navigation change, a production build was checked in Chromium at 375 pixels. The menu opened, its frozen-key link navigated to `/keys`, the unavailable state rendered, and no page errors or horizontal document overflow were observed.
+
+The CI quality job runs a frozen install, OpenAPI drift check, lint, typecheck, unit tests, production build, and a high-severity production dependency audit. The full development dependency audit currently reports one high-severity `braces` advisory through `eslint-config-next` and `fast-glob`. The advisory has no patched `braces` release listed, and the production dependency audit reports no known vulnerabilities. This review does not mean the development dependency advisory is resolved.

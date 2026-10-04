@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    name: quality
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-node@v7.0.0
+        with:
+          node-version-file: .nvmrc
+      - name: Install dependencies
+        run: corepack pnpm install --frozen-lockfile
+      - name: Verify engine schema types
+        run: corepack pnpm openapi:check
+      - name: Lint and prose
+        run: corepack pnpm lint
+      - name: Typecheck
+        run: corepack pnpm typecheck
+      - name: Unit tests
+        run: corepack pnpm test
+      - name: Production build
+        run: corepack pnpm build
+      - name: Audit production dependencies
+        run: corepack pnpm audit --prod --audit-level high
