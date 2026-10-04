@@ -71,6 +71,7 @@ h2 { letter-spacing: -.025em; line-height: 1.18; }
 .record-facts dt { color: var(--text-2); font-size: .77rem; text-transform: uppercase; letter-spacing: .06em; }
 .record-facts dd { margin: 3px 0 0; overflow-wrap: anywhere; }
 .pagination { display: flex; justify-content: space-between; gap: 16px; padding-top: 20px; font-weight: 700; }
+.code-block { padding: 20px; background: var(--surface-2); border: 1px solid var(--border-1); overflow-x: auto; white-space: pre; font-size: .86rem; line-height: 1.6; }
 
 @media (max-width: 720px) {
   .header-inner { align-items: flex-start; flex-direction: column; gap: 12px; padding-block: 16px; }

@@ -7,6 +7,7 @@ const links = [
   ['/keys', 'Frozen keys'],
   ['/incidents', 'Freeze episodes'],
   ['/status', 'Status'],
+  ['/developers', 'Developers'],
 ] as const;
 
 export function Navigation() {
