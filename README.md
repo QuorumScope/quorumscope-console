@@ -20,6 +20,7 @@ pnpm build
 
 See [API contract](docs/api-contract.md) and [version verification](docs/versions.md) for the current blockers and source details.
 
-The SDK is a private workspace package until its public package build and publication process are complete. A workspace consumer can import `QuorumScopeClient` from `@quorumscope/sdk` and provide its real engine API base URL.
+The SDK is a private workspace package until its publication process is complete. A workspace consumer can import `QuorumScopeClient` from `@quorumscope/sdk` and provide its real engine API base URL.
+Its build emits JavaScript and TypeScript declarations in `packages/sdk/dist`. `pnpm build` builds the SDK before the web app.
 
 Copy `.env.example` to `apps/web/.env.local` and set `NEXT_PUBLIC_QUORUMSCOPE_API_BASE_URL` to a real engine origin. Without it, the overview displays an explicit unavailable state.
