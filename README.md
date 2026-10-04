@@ -2,7 +2,7 @@
 
 This repository is the frontend and TypeScript SDK workspace for QuorumScope. The authoritative CAP-77 state and API live in `quorumscope-engine`.
 
-The SDK implements the current engine read endpoints. The web console has overview, network, status, and frozen-key pages that read the configured engine. Other pages are in progress. The site is not deployed. The checked-in engine OpenAPI snapshot does not expose preflight or impact.
+The SDK implements the current engine read endpoints. The web console has overview, network, status, frozen-key, and freeze-episode pages that read the configured engine. Other pages are in progress. The site is not deployed. The checked-in engine OpenAPI snapshot does not expose preflight or impact.
 
 ## Current checks
 

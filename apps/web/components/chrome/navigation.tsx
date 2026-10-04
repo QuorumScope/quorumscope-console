@@ -5,6 +5,7 @@ const links = [
   ['/', 'Overview'],
   ['/network', 'Network'],
   ['/keys', 'Frozen keys'],
+  ['/incidents', 'Freeze episodes'],
   ['/status', 'Status'],
 ] as const;
 
