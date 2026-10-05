@@ -64,11 +64,12 @@ const event = { id: 1, incident_id: episodeId, ledger_sequence: 12340, kind: 'fi
 const status = () => ({ freshness: freshness(), network_id: networkId, stream: 'fixture-indexer', last_complete_ledger: 12345, updated_at: '2026-10-04T00:00:00Z' });
 
 const window = (first, last) => ({ first_ledger: first, last_ledger: last, provider: 'fixture_provider', is_complete_for_range: false });
-const impact = () => ({
-  items: scenarios[scenario].empty ? [] : [
+const impact = (url) => ({
+  items: (scenarios[scenario].empty ? [] : [
     { evidence_class: 'direct', key_id: keyId, key_kind: 'account', description: 'This key is in the active freeze set. It has been frozen since ledger 12340.', observation_window: window(12340, 12345), evidence_ref: 'fixture-key-evidence', details: { active_since: 12340 } },
     { evidence_class: 'protocol_derived', key_id: null, key_kind: null, description: 'Frozen key counts recorded at ledger 12340, derived from the stored freeze set.', observation_window: window(12340, 12340), evidence_ref: null, details: { frozen_accounts: 1, frozen_trustlines: 0, bypassed_transactions: 1 } },
-  ],
+  ]).filter(r => !url.searchParams.get('evidence_class') || r.evidence_class === url.searchParams.get('evidence_class'))
+    .filter(r => !url.searchParams.get('key_kind') || r.key_kind === url.searchParams.get('key_kind')),
   page: 1,
   page_size: 50,
   collected_evidence_classes: ['direct', 'protocol_derived'],
@@ -153,7 +154,7 @@ const server = createServer((request, reply) => {
   else if (url.pathname === '/api/v1/incidents') result = page(url, scenarios[scenario].empty ? [] : [episode]);
   else if (url.pathname === `/api/v1/incidents/${episodeId}`) result = response(episode);
   else if (url.pathname === `/api/v1/incidents/${episodeId}/timeline`) result = page(url, [event]);
-  else if (url.pathname === '/api/v1/impact') result = response(impact());
+  else if (url.pathname === '/api/v1/impact') result = response(impact(url));
   else if (url.pathname === '/api/v1/status') result = response(status());
   else if (url.pathname === '/health/live') result = response({ status: 'fixture-ready' });
   else result = failure('not_found', 'Fixture route was not found.', 404);
