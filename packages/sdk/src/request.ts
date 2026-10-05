@@ -4,6 +4,11 @@ export interface RequestOptions {
   signal?: AbortSignal;
 }
 
+/** A JSON body sent with POST. POST requests are never retried. */
+export interface RequestBody {
+  json: unknown;
+}
+
 export interface ClientOptions {
   baseUrl: string;
   fetch?: typeof fetch;
@@ -25,7 +30,12 @@ function safeError(value: unknown): {
   return {
     code: typeof body.code === 'string' ? body.code : 'unknown_error',
     message: typeof body.message === 'string' ? body.message : 'The API request failed.',
-    requestId: typeof value.request_id === 'string' ? value.request_id : undefined,
+    requestId:
+      typeof body.request_id === 'string'
+        ? body.request_id
+        : typeof value.request_id === 'string'
+          ? value.request_id
+          : undefined,
     details: isRecord(body.details) ? body.details : undefined,
   };
 }
@@ -42,25 +52,31 @@ export function createRequester(options: ClientOptions) {
     path: string,
     query: Record<string, string | number | boolean | undefined> = {},
     requestOptions: RequestOptions = {},
+    body?: RequestBody,
   ): Promise<T> {
     const url = new URL(`${baseUrl}${path}`);
     for (const [key, value] of Object.entries(query)) {
       if (value !== undefined) url.searchParams.set(key, String(value));
     }
     const response = await fetcher(url, {
-      method: 'GET',
-      headers: { Accept: 'application/json', ...headers },
+      method: body ? 'POST' : 'GET',
+      headers: {
+        Accept: 'application/json',
+        ...(body ? { 'Content-Type': 'application/json' } : {}),
+        ...headers,
+      },
+      body: body ? JSON.stringify(body.json) : undefined,
       signal: requestOptions.signal,
       cache: 'no-store',
     });
-    let body: unknown;
+    let payload: unknown;
     try {
-      body = await response.json();
+      payload = await response.json();
     } catch {
-      body = undefined;
+      payload = undefined;
     }
     if (!response.ok) {
-      const error = safeError(body);
+      const error = safeError(payload);
       throw new QuorumScopeApiError({
         status: response.status,
         ...error,
@@ -71,7 +87,7 @@ export function createRequester(options: ClientOptions) {
         },
       });
     }
-    if (!isRecord(body)) {
+    if (!isRecord(payload)) {
       throw new QuorumScopeApiError({
         status: response.status,
         code: 'invalid_response',
@@ -83,6 +99,6 @@ export function createRequester(options: ClientOptions) {
         },
       });
     }
-    return body as T;
+    return payload as T;
   };
 }
