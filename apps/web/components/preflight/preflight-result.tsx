@@ -17,8 +17,8 @@ export function PreflightResultView({ result }: { result: PreflightResult }) {
   return <section className={`result tone-${tone}`} aria-labelledby="result-title">
     <h2 id="result-title"><span aria-hidden="true">{toneMark[tone]}</span> {statusLabel[result.status]}</h2>
     <p>{statusExplanation[result.status]}</p>
-    {result.status === 'clear' && result.freshness.status !== 'current'
-      ? <p className="notice" role="note">The state is not current, so this result is not styled as confirmed. See the freshness details.</p> : null}
+    {result.status === 'clear' && toneFor(result) !== 'calm'
+      ? <p className="notice" role="note">This result is not styled as confirmed because the state is not current or the network protocol is not verified. See the freshness details.</p> : null}
     <CompatibilityNotice freshness={result.freshness} />
     <dl className="facts">
       <Fact label="Confidence"><span title={confidenceExplanation[result.confidence]}>{confidenceLabel[result.confidence]}</span></Fact>

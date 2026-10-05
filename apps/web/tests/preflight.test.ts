@@ -20,12 +20,17 @@ test('every engine status has its documented label', () => {
   assert.equal(confidenceLabel.insufficient_information, 'Insufficient information');
 });
 
-const fresh = (status: 'current' | 'indexing_behind' | 'stale' | 'unknown') => ({ status, compatibility: 'verified' as const });
+const fresh = (status: 'current' | 'indexing_behind' | 'stale' | 'unknown', compatibility: 'verified' | 'unverified_protocol' | 'unknown' = 'verified') => ({ status, compatibility });
 
 test('calm styling is only for a clear result from current state', () => {
   assert.equal(toneFor({ status: 'clear', freshness: fresh('current') }), 'calm');
   assert.equal(toneFor({ status: 'clear', freshness: fresh('indexing_behind') }), 'neutral');
   assert.equal(toneFor({ status: 'clear', freshness: fresh('stale') }), 'neutral');
+});
+
+test('a clear result on an unverified or unknown protocol is not styled as confirmed', () => {
+  assert.equal(toneFor({ status: 'clear', freshness: fresh('current', 'unverified_protocol') }), 'neutral');
+  assert.equal(toneFor({ status: 'clear', freshness: fresh('current', 'unknown') }), 'neutral');
 });
 
 test('no other status gets calm styling, and state unavailable never looks like success', () => {

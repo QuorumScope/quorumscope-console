@@ -37,11 +37,11 @@ export const confidenceExplanation: Record<PreflightConfidence, string> = {
 
 export type Tone = 'calm' | 'blocked' | 'attention' | 'neutral';
 
-/** Calm styling is reserved for a `clear` result from current state. */
+/** Calm styling is reserved for a `clear` result from current state on a protocol the engine has verified. */
 export function toneFor(result: Pick<PreflightResult, 'status' | 'freshness'>): Tone {
   switch (result.status) {
     case 'clear':
-      return result.freshness.status === 'current' ? 'calm' : 'neutral';
+      return result.freshness.status === 'current' && result.freshness.compatibility === 'verified' ? 'calm' : 'neutral';
     case 'blocked_validation':
       return 'blocked';
     case 'allowed_by_bypass':
