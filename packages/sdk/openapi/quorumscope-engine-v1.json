@@ -185,6 +185,24 @@
               "type": "integer",
               "format": "int64"
             }
+          },
+          {
+            "name": "kind",
+            "in": "query",
+            "description": "Filter by `account`, `trustline`, `contract_data` or `contract_code`.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "active",
+            "in": "query",
+            "description": "Defaults to true. Set to false to include keys that are no longer frozen.",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
           }
         ],
         "responses": {
@@ -259,7 +277,112 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/FrozenKeyResponse"
+                  "$ref": "#/components/schemas/FrozenKeyDetailResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/impact": {
+      "get": {
+        "tags": [
+          "impact"
+        ],
+        "operationId": "impact",
+        "parameters": [
+          {
+            "name": "network_id",
+            "in": "query",
+            "description": "Network UUID. When omitted, the first network by name is selected.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "One-based page number. Defaults to 1.",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "description": "Items per page, from 1 to 100. Defaults to 50.",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "evidence_class",
+            "in": "query",
+            "description": "`direct`, `protocol_derived`, `recently_observed`, `dependency_observed` or `inferred`.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "key_kind",
+            "in": "query",
+            "description": "Restrict direct records to one key kind. Excludes records that have no key.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "key_id",
+            "in": "query",
+            "description": "Restrict direct records to one 64-character hexadecimal key hash.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImpactResponse"
                 }
               }
             }
@@ -584,6 +707,72 @@
         }
       }
     },
+    "/api/v1/preflight": {
+      "post": {
+        "tags": [
+          "preflight"
+        ],
+        "operationId": "preflight",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PreflightRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Analysis result. Check `status`; malformed XDR returns `invalid_input` here.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PreflightResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "413": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/status": {
       "get": {
         "tags": [
@@ -748,18 +937,37 @@
           }
         }
       },
+      "Compatibility": {
+        "type": "string",
+        "enum": [
+          "verified",
+          "unverified_protocol",
+          "unknown"
+        ]
+      },
       "ErrorBody": {
         "type": "object",
         "required": [
           "code",
-          "message"
+          "message",
+          "details",
+          "request_id"
         ],
         "properties": {
           "code": {
             "type": "string"
           },
+          "details": {
+            "type": "object",
+            "description": "Safe structured context. Empty when there is none."
+          },
           "message": {
             "type": "string"
+          },
+          "request_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Same value as the top-level `request_id` and the `x-request-id` header."
           }
         }
       },
@@ -779,9 +987,42 @@
           }
         }
       },
+      "FindingResponse": {
+        "type": "object",
+        "required": [
+          "status",
+          "confidence",
+          "implicated_keys",
+          "protocol_path",
+          "explanation"
+        ],
+        "properties": {
+          "confidence": {
+            "$ref": "#/components/schemas/PreflightConfidenceResponse"
+          },
+          "explanation": {
+            "type": "string"
+          },
+          "implicated_keys": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Frozen key hashes (hex) this finding implicates."
+          },
+          "protocol_path": {
+            "type": "string",
+            "description": "Where in the transaction the finding applies."
+          },
+          "status": {
+            "$ref": "#/components/schemas/PreflightStatusResponse"
+          }
+        }
+      },
       "FreezeStateResponse": {
         "type": "object",
         "required": [
+          "freshness",
           "network_id",
           "frozen_key_count",
           "bypass_count",
@@ -795,6 +1036,9 @@
           "bypass_count": {
             "type": "integer",
             "format": "int64"
+          },
+          "freshness": {
+            "$ref": "#/components/schemas/StateFreshness"
           },
           "frozen_key_count": {
             "type": "integer",
@@ -813,18 +1057,70 @@
           }
         }
       },
+      "FreshnessStatus": {
+        "type": "string",
+        "enum": [
+          "current",
+          "indexing_behind",
+          "stale",
+          "unknown"
+        ]
+      },
+      "FrozenKeyDetailResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/FrozenKeyResponse"
+          },
+          {
+            "type": "object",
+            "required": [
+              "history"
+            ],
+            "properties": {
+              "history": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/KeyChangeResponse"
+                },
+                "description": "Every recorded freeze and unfreeze, oldest first. Covers only ledgers the\nindexer has observed."
+              }
+            }
+          }
+        ]
+      },
       "FrozenKeyResponse": {
         "type": "object",
         "required": [
           "id",
           "network_id",
-          "active_since",
-          "last_changed"
+          "active"
         ],
         "properties": {
+          "active": {
+            "type": "boolean",
+            "description": "True when the key is in the current freeze set."
+          },
           "active_since": {
-            "type": "integer",
-            "format": "int64"
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int64",
+            "description": "Ledger of the freeze that is currently in effect. Null when not active."
+          },
+          "canonical_xdr": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Canonical ledger key XDR, base64 encoded."
+          },
+          "decoded": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "Decoded key fields as stored by the indexer."
           },
           "evidence_ref": {
             "type": [
@@ -832,12 +1128,31 @@
               "null"
             ]
           },
+          "first_frozen_ledger": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int64",
+            "description": "Ledger of the first recorded freeze of this key."
+          },
           "id": {
             "type": "string"
           },
+          "kind": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "`account`, `trustline`, `contract_data` or `contract_code`. Absent when the\nindexer has not stored the key content."
+          },
           "last_changed": {
-            "type": "integer",
-            "format": "int64"
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int64",
+            "description": "Ledger of the latest recorded change."
           },
           "network_id": {
             "type": "string",
@@ -877,6 +1192,90 @@
         "properties": {
           "status": {
             "type": "string"
+          }
+        }
+      },
+      "ImpactRecordResponse": {
+        "type": "object",
+        "required": [
+          "evidence_class",
+          "description",
+          "observation_window",
+          "details"
+        ],
+        "properties": {
+          "description": {
+            "type": "string"
+          },
+          "details": {
+            "type": "object",
+            "description": "Structured values behind `description`."
+          },
+          "evidence_class": {
+            "type": "string",
+            "description": "`direct` or `protocol_derived`. Other classes are not collected yet."
+          },
+          "evidence_ref": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Configuration snapshot that supports the record, when recorded."
+          },
+          "key_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "key_kind": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "observation_window": {
+            "$ref": "#/components/schemas/ObservationWindowResponse"
+          }
+        }
+      },
+      "ImpactResponse": {
+        "type": "object",
+        "required": [
+          "items",
+          "page",
+          "page_size",
+          "collected_evidence_classes",
+          "uncollected_evidence_classes"
+        ],
+        "properties": {
+          "collected_evidence_classes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Evidence classes this engine stores and can return."
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ImpactRecordResponse"
+            }
+          },
+          "page": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "page_size": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "uncollected_evidence_classes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Evidence classes in the contract that have no stored evidence, so they never appear in `items`."
           }
         }
       },
@@ -953,14 +1352,50 @@
           }
         }
       },
+      "KeyChangeResponse": {
+        "type": "object",
+        "required": [
+          "ledger_sequence",
+          "action",
+          "result",
+          "recorded_at"
+        ],
+        "properties": {
+          "action": {
+            "type": "string",
+            "description": "`freeze` or `unfreeze`."
+          },
+          "evidence_ref": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Configuration snapshot that supported the change, when recorded."
+          },
+          "ledger_sequence": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "recorded_at": {
+            "type": "string"
+          },
+          "result": {
+            "type": "string"
+          }
+        }
+      },
       "NetworkResponse": {
         "type": "object",
         "required": [
           "id",
           "name",
-          "passphrase"
+          "passphrase",
+          "freshness"
         ],
         "properties": {
+          "freshness": {
+            "$ref": "#/components/schemas/StateFreshness"
+          },
           "id": {
             "type": "string",
             "format": "uuid"
@@ -973,15 +1408,221 @@
           }
         }
       },
+      "ObservationWindowResponse": {
+        "type": "object",
+        "required": [
+          "first_ledger",
+          "last_ledger",
+          "provider",
+          "is_complete_for_range"
+        ],
+        "properties": {
+          "first_ledger": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "is_complete_for_range": {
+            "type": "boolean",
+            "description": "False when ledgers inside the range may not have been observed."
+          },
+          "last_ledger": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "provider": {
+            "type": "string",
+            "description": "Where the evidence came from."
+          }
+        }
+      },
+      "PreflightConfidenceResponse": {
+        "type": "string",
+        "enum": [
+          "deterministic",
+          "conditional",
+          "insufficient_information"
+        ]
+      },
+      "PreflightRequest": {
+        "type": "object",
+        "required": [
+          "transaction_xdr"
+        ],
+        "properties": {
+          "network_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uuid",
+            "description": "Network UUID. When omitted, the first network by name is selected."
+          },
+          "transaction_xdr": {
+            "type": "string",
+            "description": "Base64 transaction envelope XDR. Whitespace and line breaks are ignored."
+          }
+        }
+      },
+      "PreflightResponse": {
+        "type": "object",
+        "required": [
+          "request_id",
+          "network_id",
+          "status",
+          "confidence",
+          "is_bypassed",
+          "freshness",
+          "findings"
+        ],
+        "properties": {
+          "confidence": {
+            "$ref": "#/components/schemas/PreflightConfidenceResponse"
+          },
+          "findings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FindingResponse"
+            }
+          },
+          "freshness": {
+            "$ref": "#/components/schemas/StateFreshness"
+          },
+          "is_bypassed": {
+            "type": "boolean",
+            "description": "True when the transaction content hash is in the active bypass set."
+          },
+          "network_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "request_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "source_ledger": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int64",
+            "description": "Ledger the freeze state was read at. Absent when state is unavailable."
+          },
+          "status": {
+            "$ref": "#/components/schemas/PreflightStatusResponse"
+          },
+          "transaction_hash": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Hex transaction content hash for this network. Absent when the input was invalid."
+          }
+        }
+      },
+      "PreflightStatusResponse": {
+        "type": "string",
+        "enum": [
+          "clear",
+          "blocked_validation",
+          "allowed_by_bypass",
+          "apply_time_risk",
+          "dex_conditional",
+          "invalid_input",
+          "unsupported_analysis",
+          "state_unavailable"
+        ]
+      },
+      "StateFreshness": {
+        "type": "object",
+        "required": [
+          "status",
+          "compatibility"
+        ],
+        "properties": {
+          "compatibility": {
+            "$ref": "#/components/schemas/Compatibility"
+          },
+          "current_protocol_version": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int32"
+          },
+          "ingestion_lag_ledgers": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int64"
+          },
+          "last_reconciled_at": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "last_reconciled_ledger": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int64"
+          },
+          "latest_indexed_ledger": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int64"
+          },
+          "latest_network_ledger": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int64"
+          },
+          "observed_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "When the indexer last observed the network."
+          },
+          "source_ledger": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int64",
+            "description": "Ledger the stored freeze state was read at."
+          },
+          "status": {
+            "$ref": "#/components/schemas/FreshnessStatus"
+          },
+          "verified_protocol_max": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int32"
+          }
+        }
+      },
       "StatusResponse": {
         "type": "object",
         "required": [
+          "freshness",
           "network_id",
           "stream",
           "last_complete_ledger",
           "updated_at"
         ],
         "properties": {
+          "freshness": {
+            "$ref": "#/components/schemas/StateFreshness"
+          },
           "last_complete_ledger": {
             "type": "integer",
             "format": "int64"

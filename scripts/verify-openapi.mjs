@@ -8,10 +8,12 @@ const path = 'packages/sdk/openapi/quorumscope-engine-v1.json';
 const raw = await readFile(path);
 const schema = JSON.parse(raw);
 if (schema.info?.title !== 'QuorumScope API') throw new Error('Unexpected OpenAPI title.');
-for (const route of ['/api/v1/network', '/api/v1/freeze-state', '/api/v1/status']) {
+for (const route of ['/api/v1/network', '/api/v1/freeze-state', '/api/v1/status', '/api/v1/impact']) {
   if (!schema.paths?.[route]?.get) throw new Error(`Missing required route: ${route}`);
 }
 process.stdout.write(`Engine OpenAPI snapshot SHA-256: ${createHash('sha256').update(raw).digest('hex')}\n`);
+
+if (!schema.paths?.['/api/v1/preflight']?.post) throw new Error('Missing required route: POST /api/v1/preflight');
 
 const directory = await mkdtemp(join(tmpdir(), 'quorumscope-openapi-'));
 try {

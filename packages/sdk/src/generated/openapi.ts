@@ -68,6 +68,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/impact": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["impact"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/incidents": {
         parameters: {
             query?: never;
@@ -126,6 +142,22 @@ export interface paths {
         get: operations["network"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/preflight": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["preflight"];
         delete?: never;
         options?: never;
         head?: never;
@@ -201,20 +233,39 @@ export interface components {
             /** Format: int64 */
             page_size: number;
         };
+        /** @enum {string} */
+        Compatibility: "verified" | "unverified_protocol" | "unknown";
         ErrorBody: {
             code: string;
+            /** @description Safe structured context. Empty when there is none. */
+            details: Record<string, never>;
             message: string;
+            /**
+             * Format: uuid
+             * @description Same value as the top-level `request_id` and the `x-request-id` header.
+             */
+            request_id: string;
         };
         ErrorEnvelope: {
             error: components["schemas"]["ErrorBody"];
             /** Format: uuid */
             request_id: string;
         };
+        FindingResponse: {
+            confidence: components["schemas"]["PreflightConfidenceResponse"];
+            explanation: string;
+            /** @description Frozen key hashes (hex) this finding implicates. */
+            implicated_keys: string[];
+            /** @description Where in the transaction the finding applies. */
+            protocol_path: string;
+            status: components["schemas"]["PreflightStatusResponse"];
+        };
         FreezeStateResponse: {
             /** Format: int64 */
             active_incident_count: number;
             /** Format: int64 */
             bypass_count: number;
+            freshness: components["schemas"]["StateFreshness"];
             /** Format: int64 */
             frozen_key_count: number;
             /** Format: int64 */
@@ -222,13 +273,44 @@ export interface components {
             /** Format: uuid */
             network_id: string;
         };
+        /** @enum {string} */
+        FreshnessStatus: "current" | "indexing_behind" | "stale" | "unknown";
+        FrozenKeyDetailResponse: components["schemas"]["FrozenKeyResponse"] & {
+            /**
+             * @description Every recorded freeze and unfreeze, oldest first. Covers only ledgers the
+             *     indexer has observed.
+             */
+            history: components["schemas"]["KeyChangeResponse"][];
+        };
         FrozenKeyResponse: {
-            /** Format: int64 */
-            active_since: number;
+            /** @description True when the key is in the current freeze set. */
+            active: boolean;
+            /**
+             * Format: int64
+             * @description Ledger of the freeze that is currently in effect. Null when not active.
+             */
+            active_since?: number | null;
+            /** @description Canonical ledger key XDR, base64 encoded. */
+            canonical_xdr?: string | null;
+            /** @description Decoded key fields as stored by the indexer. */
+            decoded?: Record<string, never> | null;
             evidence_ref?: string | null;
+            /**
+             * Format: int64
+             * @description Ledger of the first recorded freeze of this key.
+             */
+            first_frozen_ledger?: number | null;
             id: string;
-            /** Format: int64 */
-            last_changed: number;
+            /**
+             * @description `account`, `trustline`, `contract_data` or `contract_code`. Absent when the
+             *     indexer has not stored the key content.
+             */
+            kind?: string | null;
+            /**
+             * Format: int64
+             * @description Ledger of the latest recorded change.
+             */
+            last_changed?: number | null;
             /** Format: uuid */
             network_id: string;
         };
@@ -241,6 +323,29 @@ export interface components {
         };
         HealthResponse: {
             status: string;
+        };
+        ImpactRecordResponse: {
+            description: string;
+            /** @description Structured values behind `description`. */
+            details: Record<string, never>;
+            /** @description `direct` or `protocol_derived`. Other classes are not collected yet. */
+            evidence_class: string;
+            /** @description Configuration snapshot that supports the record, when recorded. */
+            evidence_ref?: string | null;
+            key_id?: string | null;
+            key_kind?: string | null;
+            observation_window: components["schemas"]["ObservationWindowResponse"];
+        };
+        ImpactResponse: {
+            /** @description Evidence classes this engine stores and can return. */
+            collected_evidence_classes: string[];
+            items: components["schemas"]["ImpactRecordResponse"][];
+            /** Format: int64 */
+            page: number;
+            /** Format: int64 */
+            page_size: number;
+            /** @description Evidence classes in the contract that have no stored evidence, so they never appear in `items`. */
+            uncollected_evidence_classes: string[];
         };
         IncidentResponse: {
             basis: string;
@@ -263,13 +368,91 @@ export interface components {
             /** Format: int64 */
             page_size: number;
         };
+        KeyChangeResponse: {
+            /** @description `freeze` or `unfreeze`. */
+            action: string;
+            /** @description Configuration snapshot that supported the change, when recorded. */
+            evidence_ref?: string | null;
+            /** Format: int64 */
+            ledger_sequence: number;
+            recorded_at: string;
+            result: string;
+        };
         NetworkResponse: {
+            freshness: components["schemas"]["StateFreshness"];
             /** Format: uuid */
             id: string;
             name: string;
             passphrase: string;
         };
+        ObservationWindowResponse: {
+            /** Format: int64 */
+            first_ledger: number;
+            /** @description False when ledgers inside the range may not have been observed. */
+            is_complete_for_range: boolean;
+            /** Format: int64 */
+            last_ledger: number;
+            /** @description Where the evidence came from. */
+            provider: string;
+        };
+        /** @enum {string} */
+        PreflightConfidenceResponse: "deterministic" | "conditional" | "insufficient_information";
+        PreflightRequest: {
+            /**
+             * Format: uuid
+             * @description Network UUID. When omitted, the first network by name is selected.
+             */
+            network_id?: string | null;
+            /** @description Base64 transaction envelope XDR. Whitespace and line breaks are ignored. */
+            transaction_xdr: string;
+        };
+        PreflightResponse: {
+            confidence: components["schemas"]["PreflightConfidenceResponse"];
+            findings: components["schemas"]["FindingResponse"][];
+            freshness: components["schemas"]["StateFreshness"];
+            /** @description True when the transaction content hash is in the active bypass set. */
+            is_bypassed: boolean;
+            /** Format: uuid */
+            network_id: string;
+            /** Format: uuid */
+            request_id: string;
+            /**
+             * Format: int64
+             * @description Ledger the freeze state was read at. Absent when state is unavailable.
+             */
+            source_ledger?: number | null;
+            status: components["schemas"]["PreflightStatusResponse"];
+            /** @description Hex transaction content hash for this network. Absent when the input was invalid. */
+            transaction_hash?: string | null;
+        };
+        /** @enum {string} */
+        PreflightStatusResponse: "clear" | "blocked_validation" | "allowed_by_bypass" | "apply_time_risk" | "dex_conditional" | "invalid_input" | "unsupported_analysis" | "state_unavailable";
+        StateFreshness: {
+            compatibility: components["schemas"]["Compatibility"];
+            /** Format: int32 */
+            current_protocol_version?: number | null;
+            /** Format: int64 */
+            ingestion_lag_ledgers?: number | null;
+            last_reconciled_at?: string | null;
+            /** Format: int64 */
+            last_reconciled_ledger?: number | null;
+            /** Format: int64 */
+            latest_indexed_ledger?: number | null;
+            /** Format: int64 */
+            latest_network_ledger?: number | null;
+            /** @description When the indexer last observed the network. */
+            observed_at?: string | null;
+            /**
+             * Format: int64
+             * @description Ledger the stored freeze state was read at.
+             */
+            source_ledger?: number | null;
+            status: components["schemas"]["FreshnessStatus"];
+            /** Format: int32 */
+            verified_protocol_max?: number | null;
+        };
         StatusResponse: {
+            freshness: components["schemas"]["StateFreshness"];
             /** Format: int64 */
             last_complete_ledger: number;
             /** Format: uuid */
@@ -409,6 +592,10 @@ export interface operations {
                 page?: number;
                 /** @description Items per page, from 1 to 100. Defaults to 50. */
                 page_size?: number;
+                /** @description Filter by `account`, `trustline`, `contract_data` or `contract_code`. */
+                kind?: string;
+                /** @description Defaults to true. Set to false to include keys that are no longer frozen. */
+                active?: boolean;
             };
             header?: never;
             path?: never;
@@ -470,7 +657,63 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["FrozenKeyResponse"];
+                    "application/json": components["schemas"]["FrozenKeyDetailResponse"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+        };
+    };
+    impact: {
+        parameters: {
+            query?: {
+                /** @description Network UUID. When omitted, the first network by name is selected. */
+                network_id?: string;
+                /** @description One-based page number. Defaults to 1. */
+                page?: number;
+                /** @description Items per page, from 1 to 100. Defaults to 50. */
+                page_size?: number;
+                /** @description `direct`, `protocol_derived`, `recently_observed`, `dependency_observed` or `inferred`. */
+                evidence_class?: string;
+                /** @description Restrict direct records to one key kind. Excludes records that have no key. */
+                key_kind?: string;
+                /** @description Restrict direct records to one 64-character hexadecimal key hash. */
+                key_id?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImpactResponse"];
                 };
             };
             400: {
@@ -678,6 +921,62 @@ export interface operations {
                 };
             };
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+        };
+    };
+    preflight: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PreflightRequest"];
+            };
+        };
+        responses: {
+            /** @description Analysis result. Check `status`; malformed XDR returns `invalid_input` here. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PreflightResponse"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            413: {
                 headers: {
                     [name: string]: unknown;
                 };

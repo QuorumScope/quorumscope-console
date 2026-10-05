@@ -10,7 +10,36 @@ test('snapshot comes from the engine and exposes its current read endpoints', ()
   assert.equal(schema.paths['/api/v1/incidents/{id}/timeline'].get.operationId, 'timeline');
 });
 
-test('unsupported endpoints are absent from the current engine contract', () => {
-  assert.equal(schema.paths['/api/v1/preflight'], undefined);
-  assert.equal(schema.paths['/api/v1/impact'], undefined);
+test('snapshot exposes preflight and impact with the engine status enums', () => {
+  assert.equal(schema.paths['/api/v1/preflight'].post.operationId, 'preflight');
+  assert.equal(schema.paths['/api/v1/impact'].get.operationId, 'impact');
+  assert.deepEqual(schema.components.schemas.PreflightStatusResponse.enum, [
+    'clear',
+    'blocked_validation',
+    'allowed_by_bypass',
+    'apply_time_risk',
+    'dex_conditional',
+    'invalid_input',
+    'unsupported_analysis',
+    'state_unavailable',
+  ]);
+  assert.deepEqual(schema.components.schemas.PreflightConfidenceResponse.enum, [
+    'deterministic',
+    'conditional',
+    'insufficient_information',
+  ]);
+});
+
+test('freshness reports compatibility and freshness classes', () => {
+  assert.deepEqual(schema.components.schemas.FreshnessStatus.enum, [
+    'current',
+    'indexing_behind',
+    'stale',
+    'unknown',
+  ]);
+  assert.deepEqual(schema.components.schemas.Compatibility.enum, [
+    'verified',
+    'unverified_protocol',
+    'unknown',
+  ]);
 });
