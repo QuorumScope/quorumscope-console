@@ -19,6 +19,7 @@ const scenarios = {
   behind: { freshness: { status: 'indexing_behind', latest_network_ledger: 12400, ingestion_lag_ledgers: 55 } },
   unverified: { freshness: { compatibility: 'unverified_protocol', current_protocol_version: 29 } },
   unavailable: { down: true },
+  slow: { delay: 1500 },
 };
 let scenario = 'default';
 
@@ -108,8 +109,11 @@ function cors(reply) {
 }
 
 function send(reply, result) {
-  reply.writeHead(result.status, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store', 'X-QuorumScope-Fixture': 'synthetic-openapi-shape' });
-  reply.end(JSON.stringify(result.body));
+  const slow = scenarios[scenario].delay && result.status < 400 && !reply.req.url.startsWith('/__fixture/');
+  setTimeout(() => {
+    reply.writeHead(result.status, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store', 'X-QuorumScope-Fixture': 'synthetic-openapi-shape' });
+    reply.end(JSON.stringify(result.body));
+  }, slow ? scenarios[scenario].delay : 0);
 }
 
 const server = createServer((request, reply) => {
