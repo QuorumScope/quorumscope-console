@@ -6,6 +6,8 @@ The SDK covers every endpoint in the engine contract, including `POST /api/v1/pr
 
 Every page that shows live state also shows its data freshness and whether the network protocol is newer than the engine has verified. Fixture data is used only by browser tests.
 
+Verification status: the console has run end to end against a local engine on Stellar testnet with real PostgreSQL. That run saw an empty freeze set only, so non-empty freeze behavior is covered by fixture tests and the engine's own tests, not by a live run. [docs/testing.md](docs/testing.md) has the details.
+
 The interface supports light, dark, and system themes. The theme choice is the only preference saved in browser storage.
 
 `/api/health` reports whether the web process can answer HTTP requests. It does not assert engine or network health. Use `/status` for engine-reported status when an API origin is configured.

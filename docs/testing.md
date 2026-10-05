@@ -12,13 +12,29 @@ corepack pnpm e2e         # Playwright on Chromium, Firefox, and WebKit
 
 `pnpm e2e` builds the web app against the fixture engine and starts both servers. Set `QS_REUSE_SERVERS=1` to reuse servers you already started: the fixture engine (`node e2e/fixtures/server.mjs`) and `next start -p 3100` built with `NEXT_PUBLIC_QUORUMSCOPE_API_BASE_URL=http://127.0.0.1:4010`. Install browsers first with `pnpm exec playwright install`.
 
-## Mock versus live
+## Live and fixture verification
 
-Everything in this repository is tested against a fixture engine or against the committed OpenAPI snapshot. None of it proves that the engine works. The engine repository records what was checked against a live network.
+Browser tests (`pnpm e2e`) use a fixture engine. They prove how the console presents engine responses. They do not prove that the engine works. The scenarios (default, empty, stale, behind, unverified, unavailable) and the canned preflight answers are documented in `e2e/fixtures/provenance.md`. The SDK tests use synthetic identifiers and response shapes taken from the OpenAPI snapshot.
 
-The SDK tests use synthetic identifiers and response shapes taken from the OpenAPI snapshot. The browser tests use `e2e/fixtures/server.mjs`, whose scenarios (default, empty, stale, behind, unverified, unavailable) and canned preflight answers are documented in `e2e/fixtures/provenance.md`. The preflight tests show how the console presents each engine status. They do not show that the engine classifies a real transaction that way.
+### Live verified (2026-10-05, local)
 
-No live engine check has been run from this repository.
+The console, built with `NEXT_PUBLIC_QUORUMSCOPE_API_BASE_URL` set to a local engine API, ran against the engine at commit `34cb68e`, real PostgreSQL 16, and Stellar testnet RPC. The engine had run a one-shot index and then watch mode, and `ALLOWED_ORIGINS` listed the console origin. `pnpm live:check` drove a Chromium browser through the overview, network, status, frozen keys, bypasses, freeze episodes, impact, developers, and preflight pages.
+
+Observed:
+
+- Every page loaded without an error state.
+- The freshness panel showed `Current`, protocol 29 from testnet, a verified maximum of 28, and the `unverified_protocol` warning on every live page.
+- The overview and the frozen key list said no active frozen keys were reported at the source ledger, and only because freshness was `current`.
+- The Freeze Map was empty and said that an empty map says nothing about relationships or dependencies.
+- A preflight request with a synthetic transaction returned `clear`. Because the protocol is unverified, the result was not styled as confirmed.
+- The browser sent the transaction to the engine origin by POST. The console server received no transaction. It was not in the URL, local storage, session storage, or cookies. No POST went to any other origin, and no request left the console and engine origins.
+- The content security policy blocked a fetch to another origin and allowed the engine origin.
+
+This live run found one defect that the fixture tests had not: a `clear` result was styled as confirmed on an unverified protocol. It is fixed, and a unit test and a browser test now cover it.
+
+Not proven by the live run: how the console and engine behave when the freeze set is non-empty. Testnet had no frozen keys, bypasses, or freeze episodes. Those states are covered only by fixture tests and by the engine repository's own tests.
+
+To repeat the run, start the engine (`index once`, `index watch`, `serve` with `ALLOWED_ORIGINS` set to the console origin), build and start the console with the engine URL, then run `QS_XDR_FILE=<file with a base64 envelope> pnpm live:check`. The script exits with an error if a check fails. It is not part of CI.
 
 ## What is covered
 
