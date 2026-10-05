@@ -133,3 +133,24 @@ h2 { letter-spacing: -.025em; line-height: 1.18; }
 .tone-blocked { border-left-color: var(--critical); }
 .tone-attention { border-left-color: var(--focus); border-left-style: double; }
 .tone-neutral { border-left-style: dotted; }
+.evidence { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; padding: 2px 8px; border: 1px solid var(--border-1); }
+.evidence-direct { border-color: var(--accent); }
+.evidence-protocol_derived { border-style: dashed; border-color: var(--accent); }
+.evidence-inferred { border-style: dotted; }
+.small { font-size: .84rem; margin: 6px 0 0; }
+.freeze-map { display: block; }
+.map-svg { width: 100%; height: auto; max-width: 720px; }
+.map-lane { font-size: 11px; font-weight: 700; fill: var(--text-2); letter-spacing: .04em; }
+.map-more { font-size: 11px; fill: var(--text-2); }
+.map-node { cursor: pointer; }
+.map-node rect { fill: var(--surface-2); stroke: var(--accent); stroke-width: 1.5; }
+.map-node.selected rect { fill: var(--surface-1); stroke-width: 3; }
+.map-node text { font-size: 11px; fill: var(--text-1); }
+.map-node:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+.map-detail { margin-top: 14px; padding: 12px 16px; background: var(--surface-2); overflow-wrap: anywhere; }
+.map-detail h3 { margin: 0 0 6px; }
+.map-fallback { display: none; }
+@media (max-width: 720px) {
+  .freeze-map { display: none; }
+  .map-fallback { display: block; }
+}
