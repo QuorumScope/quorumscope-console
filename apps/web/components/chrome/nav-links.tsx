@@ -7,6 +7,7 @@ const links = [
   ['/', 'Overview'],
   ['/network', 'Network'],
   ['/keys', 'Frozen keys'],
+  ['/preflight', 'Preflight'],
   ['/incidents', 'Freeze episodes'],
   ['/status', 'Status'],
   ['/developers', 'Developers'],

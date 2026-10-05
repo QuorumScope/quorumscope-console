@@ -1,12 +1,25 @@
 import type { NextConfig } from 'next';
 
+function apiOrigin(): string | undefined {
+  const value = process.env.NEXT_PUBLIC_QUORUMSCOPE_API_BASE_URL;
+  if (!value) return undefined;
+  try {
+    return new URL(value).origin;
+  } catch {
+    return undefined;
+  }
+}
+
+// The preflight form posts to the engine API from the browser, so only that origin is allowed.
+const connectSources = ["'self'", apiOrigin()].filter(Boolean).join(' ');
+
 const contentSecurityPolicy = [
   "default-src 'self'",
   "script-src 'self' 'unsafe-inline'",
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data:",
   "font-src 'self'",
-  "connect-src 'self'",
+  `connect-src ${connectSources}`,
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self'",

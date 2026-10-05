@@ -22,7 +22,7 @@ export default async function OverviewPage() {
     <p className="eyebrow">Stellar Quorum Freeze inspection</p>
     <h1>Engine-reported freeze state, with its source in view.</h1>
     <p className="lede">QuorumScope reads Stellar Quorum Freeze state and explains how it affects ledger keys and transactions. Check the data freshness before relying on a result.</p>
-    <div className="actions"><Link className="button" href="/network">Inspect network</Link><Link className="button secondary" href="/status">Service status</Link></div>
+    <div className="actions"><Link className="button" href="/network">Inspect network</Link><Link className="button secondary" href="/preflight">Preflight transaction</Link></div>
     {network && freeze ? <>
       <FreshnessPanel freshness={freeze.freshness} />
       <section className="panel" aria-labelledby="state-title">

@@ -10,7 +10,7 @@
     "build": "corepack pnpm --filter @quorumscope/sdk build && corepack pnpm --filter @quorumscope/web build",
     "lint": "node scripts/check-prose.mjs && corepack pnpm --filter @quorumscope/web lint",
     "typecheck": "node scripts/verify-openapi.mjs && corepack pnpm --filter @quorumscope/sdk typecheck && corepack pnpm --filter @quorumscope/sdk build && corepack pnpm --filter @quorumscope/web typecheck",
-    "test": "node --test tests/*.test.mjs && corepack pnpm --filter @quorumscope/sdk test",
+    "test": "node --test tests/*.test.mjs && corepack pnpm --filter @quorumscope/sdk test && corepack pnpm --filter @quorumscope/web test",
     "openapi:fetch": "node scripts/fetch-openapi.mjs",
     "openapi:generate": "openapi-typescript packages/sdk/openapi/quorumscope-engine-v1.json -o packages/sdk/src/generated/openapi.ts",
     "openapi:check": "node scripts/verify-openapi.mjs",
