@@ -1,6 +1,24 @@
 # Deployment
 
-The console has not been deployed. No public URL exists, and none is recorded here.
+## Staging
+
+A staging deployment exists. It runs against Stellar testnet and is not a production site.
+
+| Part | Where | Notes |
+| --- | --- | --- |
+| Console | https://quorumscope-console.vercel.app (Vercel, Hobby team, project `quorumscope-console`, root directory `apps/web`) | Built from `QuorumScope/quorumscope-console` on `main` with a build command that builds the SDK first. |
+| Engine API and indexer | https://quorumscope-engine-api.onrender.com (Render free web service) | Built from the engine's `Dockerfile`. One process group runs the indexer in the background and the API in the foreground. |
+| PostgreSQL | Supabase free project, session pooler | Supabase's direct host is IPv6 only and Render's free plan has no IPv6, so the engine uses the pooler host. |
+
+Settings in use: the console has `NEXT_PUBLIC_QUORUMSCOPE_API_BASE_URL` set to the engine URL above, and the engine has `ALLOWED_ORIGINS` set to the console URL and `VERIFIED_PROTOCOL_MAX=28`. The database URL is a secret held only in the Render service settings.
+
+Limits of this staging setup:
+
+- Render's free web service sleeps after 15 minutes without requests. The indexer stops while it sleeps, so freshness turns `stale` until a request wakes it and the indexer polls again. The first request after sleep can take a minute. For a standing deployment, run the indexer as its own background worker on a paid plan.
+- A Render deploy is marked failed if the first start fails, and a sleeping service then restarts from that failed deploy. After fixing a bad `DATABASE_URL`, trigger a new deploy with Manual Deploy.
+- Vercel has no GitHub access to the QuorumScope organization by default. The Vercel GitHub app was installed on the organization so the project deploys from the original repository and redeploys on each push to `main`.
+
+Verified on staging on 2026-10-05: see [testing.md](testing.md).
 
 ## What gets deployed
 
