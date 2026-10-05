@@ -32,7 +32,16 @@ Observed:
 
 This live run found one defect that the fixture tests had not: a `clear` result was styled as confirmed on an unverified protocol. It is fixed, and a unit test and a browser test now cover it.
 
-Not proven by the live run: how the console and engine behave when the freeze set is non-empty. Testnet had no frozen keys, bypasses, or freeze episodes. Those states are covered only by fixture tests and by the engine repository's own tests.
+### Staging verified (2026-10-05)
+
+The deployed console at https://quorumscope-console.vercel.app, backed by the deployed engine and a Supabase database, showed in a real browser:
+
+- Current freshness, network protocol 29, verified maximum 28, and the `unverified_protocol` warning.
+- "No active frozen keys" only because freshness was current, and empty keys, bypasses, freeze episodes, and impact pages.
+- A preflight request from the deployed console reached only the engine origin. The response was `clear`, not styled as confirmed because the protocol is unverified. The transaction was not in any URL, local storage, session storage, or cookie.
+- A content security policy whose `connect-src` is the console origin plus the engine origin, and the usual security headers.
+
+Not proven by the live runs: how the console and engine behave when the freeze set is non-empty. Testnet had no frozen keys, bypasses, or freeze episodes. Those states are covered only by fixture tests and by the engine repository's own tests.
 
 To repeat the run, start the engine (`index once`, `index watch`, `serve` with `ALLOWED_ORIGINS` set to the console origin), build and start the console with the engine URL, then run `QS_XDR_FILE=<file with a base64 envelope> pnpm live:check`. The script exits with an error if a check fails. It is not part of CI.
 
@@ -65,6 +74,27 @@ Lighthouse found three defects that are fixed:
 - `/favicon.ico` returned 404, which cost best practices 4 points on every page. The app now serves an icon built from the QuorumScope mark.
 - Replacing the loading state with the page caused a layout shift of 0.23 on the desktop overview. Two causes, found by logging the shift sources: the vertical scrollbar appeared when the page grew taller than the loading state, which moved the centered content sideways, and the footer sat inside the first screen during loading and was pushed down. The page now reserves its scrollbar gutter, and the main area is at least one screen tall so the footer starts below the fold.
 - An earlier fix removed the loading state to avoid that shift. It is back.
+
+### Lighthouse against staging
+
+Run on 2026-10-05 against https://quorumscope-console.vercel.app, which fetches from the engine on Render and a Supabase database. Same Lighthouse version and settings, run from a laptop over a home connection. Both services were warmed first.
+
+| Page | Mobile (perf / a11y / best practices / SEO) | Desktop |
+| --- | --- | --- |
+| Overview | 46 / 100 / 100 / 63 | no result (run timed out) |
+| Network | no result (run timed out) | 50 / 100 / 100 / 63 |
+| Frozen keys | 56 / 100 / 100 / 63 | 63 / 100 / 100 / 63 |
+| Preflight | 58 / 100 / 100 / 63 | 63 / 100 / 100 / 63 |
+| Impact | 41 / 100 / 100 / 63 | 54 / 100 / 100 / 91 |
+| Status | 45 / 100 / 100 / 63 | 62 / 100 / 100 / 63 |
+
+What these numbers do and do not show:
+
+- Accessibility and best practices were 100 on every run that painted. Cumulative layout shift was 0, or 0.001 on one page, on every run.
+- The performance scores are not a fair measure of the console. The laptop was busy: its load average was about 9, the Lighthouse CPU benchmark index was 156 (437 during the local runs above), and every mobile run warned that the CPU was slower than Lighthouse expects. Total blocking time was 0.4 to 4.8 s as a result. An orphaned test browser from an earlier run was also consuming CPU until it was stopped. The local runs above, taken on a quiet machine, are the better baseline: desktop 89 to 98 and mobile 67 to 77.
+- Network time adds to the real cost. Each page makes a server-side request from Vercel to Render, and Render's free service takes up to a minute to wake after sleeping. A first pass that hit a cold engine had a first contentful paint of 6 to 7 s on two pages.
+- SEO is 63 because the page is blocked from indexing. That is deliberate: staging serves a `robots.txt` that disallows all crawlers. One run also reported a timeout fetching `robots.txt`. Before that file existed, SEO was 100 locally.
+- Two runs timed out and wrote no result (mobile network, desktop overview). One desktop network run did not paint and was rerun, which gave the 50 above. A clean rerun of all of these on an idle machine has not been done. Treat staging performance as unmeasured until it is.
 
 ## Loading state
 
