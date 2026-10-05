@@ -14,7 +14,7 @@ test('overview shows engine fixture state and its network label', async ({ page 
 test('network and bypass routes show source fields', async ({ page }) => {
   await page.goto('/network');
   await expect(page.getByText('Fixture network', { exact: true })).toBeVisible();
-  await expect(page.getByText('12345', { exact: true })).toBeVisible();
+  await expect(page.getByText('12,345', { exact: true }).first()).toBeVisible();
   await page.getByRole('link', { name: 'Inspect active bypass evidence' }).click();
   await expect(page).toHaveURL('/bypasses');
   await expect(page.getByText('fixture-bypass-evidence')).toBeVisible();
@@ -24,9 +24,9 @@ test('frozen key list, detail, and empty page stay distinct', async ({ page }) =
   await page.goto('/keys');
   await page.getByRole('link', { name: keyId }).click();
   await expect(page).toHaveURL(`/keys/${keyId}`);
-  await expect(page.getByText('fixture-key-evidence')).toBeVisible();
+  await expect(page.getByText('fixture-key-evidence').first()).toBeVisible();
   await page.goto('/keys?page=2');
-  await expect(page.getByText('No frozen keys were returned for this page.')).toBeVisible();
+  await expect(page.getByText('This page has no keys.')).toBeVisible();
   await expect(page.getByText('Frozen keys unavailable')).toHaveCount(0);
 });
 
@@ -62,10 +62,11 @@ test('mobile menu navigates without horizontal overflow', async ({ page }) => {
   expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)).toBe(false);
 });
 
-test('important read views pass automated axe checks', async ({ page }) => {
-  for (const route of ['/', '/network', '/keys', '/incidents', '/status', '/developers']) {
+const axeRoutes = ['/', '/network', '/keys', `/keys/${keyId}`, '/preflight', '/incidents', `/incidents/${episodeId}`, '/status', '/developers'];
+for (const route of axeRoutes) {
+  test(`${route} passes automated axe checks`, async ({ page }) => {
     await page.goto(route);
     const results = await new AxeBuilder({ page }).analyze();
     expect(results.violations, route).toEqual([]);
-  }
-});
+  });
+}
