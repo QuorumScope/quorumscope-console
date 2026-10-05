@@ -14,7 +14,8 @@
     "openapi:fetch": "node scripts/fetch-openapi.mjs",
     "openapi:generate": "openapi-typescript packages/sdk/openapi/quorumscope-engine-v1.json -o packages/sdk/src/generated/openapi.ts",
     "openapi:check": "node scripts/verify-openapi.mjs",
-    "e2e": "playwright test"
+    "e2e": "playwright test",
+    "live:check": "node scripts/live-check.mjs"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.13.0",
