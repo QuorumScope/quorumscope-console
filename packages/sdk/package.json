@@ -13,5 +13,6 @@
     "build": "tsc -p tsconfig.build.json",
     "typecheck": "tsc --noEmit",
     "test": "node --test tests/*.test.mjs"
-  }
+  },
+  "license": "Apache-2.0"
 }
