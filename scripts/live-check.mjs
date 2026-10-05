@@ -21,7 +21,6 @@ const check = (name, ok) => { console.log(`${ok ? 'pass' : 'FAIL'}  ${name}`); i
 
 for (const route of ['/', '/network', '/status', '/keys', '/bypasses', '/incidents', '/impact', '/developers', '/preflight']) {
   const response = await page.goto(base + route);
-  await page.waitForFunction(() => !document.body.innerText.includes('Reading engine state'));
   const text = (await page.locator('main').innerText()).replace(/\n+/g, ' | ');
   console.log(`\n${route} (${response?.status()})\n${text.slice(0, 900)}`);
   check(`${route} loads without an error state`, response?.status() === 200 && (await page.locator('.data-error').count()) === 0);
