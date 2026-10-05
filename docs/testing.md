@@ -40,28 +40,35 @@ To repeat the run, start the engine (`index once`, `index watch`, `serve` with `
 
 - SDK: request URLs and methods, query serialization, JSON body, nested and top-level request IDs, unknown and non-JSON errors, abort, no retry of preflight, custom fetch and headers, every method's success and error path.
 - Web logic (`apps/web/tests`): contrast ratios of the design tokens in both themes, status and confidence labels, calm styling only for a clear result from current state, input validation, evidence labels and distinct marks, deterministic Freeze Map layout, per-lane cap on a 5,000 record set, and which records reach the map.
-- Browser: every preflight status, local validation with an associated message, an API error with its request ID, input kept after errors, keyboard submission, Clear, no transaction in the URL, local storage, session storage, or cookies. Freshness states: current, stale, behind, unverified protocol, empty freeze set, and an unavailable backend. Key filters, key detail with history, impact with evidence classes, filters and coverage notes, Freeze Map keyboard selection, the narrow-screen fallback to the table, theme persistence, mobile menu, and the not-found page.
+- Browser: the loading state with a delayed engine, every preflight status, local validation with an associated message, an API error with its request ID, input kept after errors, keyboard submission, Clear, no transaction in the URL, local storage, session storage, or cookies. Freshness states: current, stale, behind, unverified protocol, empty freeze set, and an unavailable backend. Key filters, key detail with history, impact with evidence classes, filters and coverage notes, Freeze Map keyboard selection, the narrow-screen fallback to the table, theme persistence, mobile menu, and the not-found page.
 - Accessibility: axe runs on the overview, network, keys, key detail, preflight (empty and with a result), impact, freeze episodes, episode detail, status, and developers pages. Color contrast is also checked in the dark theme, and scripted keyboard tests run in every browser project. Details are in [accessibility.md](accessibility.md).
 
 ## Lighthouse
 
-Run on 2026-10-05 against the production build served locally by `next start`, with the fixture engine behind it. This measures the console only, not a deployed site or a real engine. Lighthouse 13.5.0, headless Chromium 153, Linux. The host benchmark index was 437 (mobile run default CPU slowdown of 4x). One run per page, so expect some variance.
+Run on 2026-10-05 against the production build served locally by `next start`, with the fixture engine behind it. This measures the console only, not a deployed site or a real engine. Lighthouse 13.5.0, headless Chromium 153, Linux, default mobile emulation with 4x simulated CPU slowdown, and the desktop preset. One run per page. Scores moved by several points between runs on this machine, so treat them as ranges.
 
 | Page | Mobile (perf / a11y / best practices / SEO) | Desktop |
 | --- | --- | --- |
-| Overview | 73 / 100 / 100 / 100 | 96 / 100 / 100 / 100 |
-| Network | 77 / 100 / 100 / 100 | 96 / 100 / 100 / 100 |
-| Frozen keys | 73 / 100 / 100 / 100 | 95 / 100 / 100 / 100 |
-| Preflight | 71 / 100 / 100 / 100 | 96 / 100 / 100 / 100 |
-| Impact | 72 / 100 / 100 / 100 | 98 / 100 / 100 / 100 |
-| Status | 75 / 100 / 100 / 100 | 97 / 100 / 100 / 100 |
+| Overview | 72 / 100 / 100 / 100 | 97 / 100 / 100 / 100 |
+| Network | 74 / 100 / 100 / 100 | 96 / 100 / 100 / 100 |
+| Frozen keys | 67 / 100 / 100 / 100 | 92 / 100 / 100 / 100 |
+| Preflight | 76 / 100 / 100 / 100 | 89 / 100 / 100 / 100 |
+| Impact | 74 / 100 / 100 / 100 | 94 / 100 / 100 / 100 |
+| Status | 67 / 100 / 100 / 100 | 92 / 100 / 100 / 100 |
 
-Cumulative layout shift was 0 on every page. On mobile, first contentful paint was 0.9 to 1.4 s, largest contentful paint 1.5 to 2.5 s, and total blocking time 1.1 to 1.8 s. Total blocking time is what holds the mobile performance score at 71 to 77. It comes from hydrating the client bundle under 4x simulated CPU slowdown, and it was not reduced further. The desktop scores are 95 to 98.
+The same pages with the fixture engine delayed by 1.5 s, so the loading state is on screen during the run: overview, frozen keys, and impact scored 60 to 69 on mobile and 91 to 96 on desktop.
 
-Lighthouse found two defects that are now fixed:
+Cumulative layout shift was 0 on every page, and at most 0.001 with the delayed engine. On mobile, first contentful paint was 0.8 to 1.1 s, largest contentful paint 1.4 to 3.9 s, and total blocking time 1.2 to 2.3 s. Total blocking time is what holds the mobile performance score down. It comes from hydrating the client bundle under 4x simulated CPU slowdown, and it was not reduced.
+
+Lighthouse found three defects that are fixed:
 
 - `/favicon.ico` returned 404, which cost best practices 4 points on every page. The app now serves an icon built from the QuorumScope mark.
-- A route-level loading screen caused a layout shift of 0.23 on the desktop overview when the page content replaced it. The loading screen was removed, so a page now renders when the engine answers. During client navigation the previous page stays until the next one is ready. The console has no dedicated loading state as a result.
+- Replacing the loading state with the page caused a layout shift of 0.23 on the desktop overview. Two causes, found by logging the shift sources: the vertical scrollbar appeared when the page grew taller than the loading state, which moved the centered content sideways, and the footer sat inside the first screen during loading and was pushed down. The page now reserves its scrollbar gutter, and the main area is at least one screen tall so the footer starts below the fold.
+- An earlier fix removed the loading state to avoid that shift. It is back.
+
+## Loading state
+
+`apps/web/app/loading.tsx` is shown while the engine answers. It has a status role and a heading, and holds no data. It says "No result is shown until it arrives." It never shows a count, a freshness value, an empty-list message, or a preflight result. `e2e/specs/loading.spec.ts` delays the fixture engine and checks all of this on the overview and key list, checks client-side navigation to a slow page, and measures layout shift in the browser (under 0.02).
 
 ## What was not done
 
