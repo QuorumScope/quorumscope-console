@@ -70,3 +70,11 @@ for (const route of axeRoutes) {
     expect(results.violations, route).toEqual([]);
   });
 }
+
+test('robots.txt keeps crawlers out until a production site exists', async ({ request }) => {
+  const response = await request.get('/robots.txt');
+  expect(response.status()).toBe(200);
+  const text = await response.text();
+  expect(text).toContain('User-Agent: *');
+  expect(text).toContain('Disallow: /');
+});
