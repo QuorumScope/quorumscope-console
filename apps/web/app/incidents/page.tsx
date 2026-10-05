@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { DataError } from '../../components/feedback/data-error';
+import { FreshnessSection } from '../../components/status/freshness-panel';
 import { engineClient, errorMessage, load } from '../../lib/api';
 import { parsePage } from '../../lib/page';
 
@@ -9,11 +10,15 @@ export const dynamic = 'force-dynamic';
 
 export default async function IncidentsPage({ searchParams }: { searchParams: Promise<{ page?: string }> }) {
   const page = parsePage((await searchParams).page);
-  const result = await load(() => engineClient().incidents.list({ page, pageSize: 25 }));
+  const [result, fresh] = await Promise.all([
+    load(() => engineClient().incidents.list({ page, pageSize: 25 })),
+    load(() => engineClient().freezeState.get()),
+  ]);
   return <>
     <p className="eyebrow">Derived chronology</p>
     <h1>Freeze episodes</h1>
     <p className="lede">The engine derives these episodes from indexed freeze evidence. An episode does not, by itself, identify a cause or an emergency.</p>
+    <FreshnessSection result={fresh} />
     {result.data ? <section className="panel" aria-labelledby="episodes-title">
       <div className="panel-header"><h2 id="episodes-title">Indexed episodes</h2><span className="muted">Page {result.data.page}</span></div>
       {result.data.items.length ? <ul className="record-list">
