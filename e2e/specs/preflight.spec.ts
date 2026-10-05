@@ -124,3 +124,16 @@ test('the preflight form and a result pass automated axe checks and work on a sm
   expect(results.violations).toEqual([]);
   expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)).toBe(false);
 });
+
+test('a clear result on an unverified protocol is not styled as confirmed', async ({ page, request }) => {
+  await request.get('http://127.0.0.1:4010/__fixture/scenario/unverified');
+  try {
+    await analyze(page, 'fixtureClear');
+    await expect(heading(page, 'No active freeze conflict detected')).toBeVisible();
+    await expect(page.locator('.result.tone-calm')).toHaveCount(0);
+    await expect(page.getByText(/not styled as confirmed/)).toBeVisible();
+    await expect(page.getByText(/has not verified compatibility with protocol 29/).first()).toBeVisible();
+  } finally {
+    await request.get('http://127.0.0.1:4010/__fixture/scenario/default');
+  }
+});

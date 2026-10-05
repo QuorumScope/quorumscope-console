@@ -56,6 +56,7 @@ test('an empty freeze set is reported against the source ledger', async ({ page,
   await request.get('http://127.0.0.1:4010/__fixture/scenario/empty');
   await page.goto('/impact');
   await expect(page.getByText(/No impact records matched at source ledger 12,345/)).toBeVisible();
+  await expect(page.getByText(/No frozen keys are on the map for these filters/)).toBeVisible();
   await request.get('http://127.0.0.1:4010/__fixture/scenario/default');
 });
 

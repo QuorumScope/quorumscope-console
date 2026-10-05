@@ -38,7 +38,7 @@ export function FreezeMap({ records }: { records: ImpactRecord[] }) {
       </g>)}
     </svg>
     <div className="map-detail" aria-live="polite">
-      {chosen ? <>
+      {layout.nodes.length === 0 ? <p>No frozen keys are on the map for these filters. The map draws direct freeze evidence only, so an empty map says nothing about relationships or dependencies.</p> : chosen ? <>
         <h3>Selected key</h3>
         <p className="mono">{chosen.id}</p>
         <p>{keyKindLabel[chosen.kind]}. {isEvidenceClass(chosen.record.evidence_class) ? evidenceLabel[chosen.record.evidence_class] : chosen.record.evidence_class} evidence. {chosen.record.description}</p>
