@@ -65,7 +65,8 @@ export default async function KeysPage({ searchParams }: { searchParams: Promise
             <div><dt>Evidence</dt><dd className="mono">{key.evidence_ref ?? 'Not reported'}</dd></div>
           </dl>
         </li>)}
-      </ul> : fresh.data?.freshness.status === 'current'
+      </ul> : page > 1 ? <p>This page has no keys. Go back to the previous page.</p>
+        : fresh.data?.freshness.status === 'current'
         ? <p>No {history ? 'known' : 'active frozen'} keys{kind ? ` of kind ${kindLabel[kind].toLowerCase()}` : ''} were reported at source ledger {formatLedger(fresh.data.freshness.source_ledger)}.</p>
         : <p>No keys were returned, but the state is not current. This is not a confirmation that nothing is frozen.</p>}
       <nav className="pagination" aria-label="Frozen key pages">
