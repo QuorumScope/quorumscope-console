@@ -22,7 +22,7 @@ QuorumScope web console and TypeScript SDK for Stellar Quorum Freeze visibility,
 
 ## What is QuorumScope Console?
 
-QuorumScope Console is the web interface and TypeScript SDK workspace for the QuorumScope platform. It connects to the QuorumScope Engine to provide clear visibility into Stellar Quorum Freeze (CAP-77) state, real-time data freshness, transaction preflight evaluations, blast radius impact data, and historical key modifications.
+QuorumScope Console is the web interface and TypeScript SDK workspace for the QuorumScope platform. It connects to the QuorumScope Engine to provide clear visibility into Stellar Quorum Freeze (CAP-77) state, data freshness, transaction preflight evaluations, blast radius impact data, and historical key modifications.
 
 The repository includes:
 - **Web Console (`apps/web`)**: A Next.js application designed for operators, developers, and auditors.
