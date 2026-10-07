@@ -14,7 +14,7 @@ QuorumScope web console and TypeScript SDK for Stellar Quorum Freeze visibility,
 [![Testnet Connected](https://img.shields.io/badge/Testnet-Connected-success.svg)](https://quorumscope-console.vercel.app/network)
 [![Branch Protected](https://img.shields.io/badge/Branch_Protection-Active-success.svg)](https://github.com/QuorumScope/quorumscope-console/tree/main)
 
-[Documentation](https://quorumscope.github.io/quorumscope-console/) · [Staging Console](https://quorumscope-console.vercel.app) · [Staging API](https://quorumscope-engine-api.onrender.com) · [Latest Release](../../releases/latest) · [Security](SECURITY.md) · [Contributing](CONTRIBUTING.md)
+[Documentation](https://quorumscope.github.io/quorumscope-console/) · [Staging Console](https://quorumscope-console.vercel.app) · [Staging API](https://quorumscope-engine-api.onrender.com) · [Latest Release](https://github.com/QuorumScope/quorumscope-console/releases/latest) · [Security](SECURITY.md) · [Contributing](CONTRIBUTING.md)
 
 </div>
 
@@ -46,6 +46,7 @@ QuorumScope Console provides this visibility without requiring operators to inte
 | --- | --- | --- |
 | Web Console | Vercel | [Staging Console](https://quorumscope-console.vercel.app) |
 | Engine API | Render | [Staging API](https://quorumscope-engine-api.onrender.com) |
+| OpenAPI Specification | Render | [OpenAPI JSON](https://quorumscope-engine-api.onrender.com/openapi.json) |
 | Engine Storage | Supabase | Managed PostgreSQL 16 |
 | Target Network | Stellar Testnet | RPC at `https://soroban-testnet.stellar.org` |
 
@@ -277,3 +278,5 @@ Core contribution policies:
 - Visual regression baseline testing suite.
 - Copy-to-clipboard buttons for hashes, addresses, and XDR strings.
 - Formal npm registry publication for `@quorumscope/sdk`.
+
+For detailed release history and milestone planning, see [CHANGELOG.md](CHANGELOG.md) and [ROADMAP.md](ROADMAP.md).
