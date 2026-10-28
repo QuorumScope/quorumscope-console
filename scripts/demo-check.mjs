@@ -1,6 +1,6 @@
 import { chromium } from '@playwright/test';
 import { readFileSync } from 'node:fs';
-import { QuorumScopeClient } from '@quorumscope/sdk';
+import { QuorumScopeClient } from '../packages/sdk/dist/index.js';
 
 const engine = process.env.QS_ENGINE_URL ?? 'http://127.0.0.1:18080';
 const consoleUrl = process.env.QS_CONSOLE_URL ?? 'http://127.0.0.1:3100';
@@ -42,12 +42,12 @@ for (const route of ['/', '/network', '/keys', '/bypasses', '/incidents', '/impa
   if (response?.status() !== 200) throw new Error(`${route} returned ${response?.status()}`);
 }
 await page.goto(`${consoleUrl}/keys`);
-await page.getByText(fixture.frozen_account, { exact: true }).waitFor();
+await page.getByText(keys.items[0].id, { exact: true }).waitFor();
 await page.goto(`${consoleUrl}/preflight`);
 await page.getByLabel('Transaction envelope (base64 XDR)').fill(fixture.bypassed_transaction_xdr);
 await page.getByRole('button', { name: 'Analyze transaction' }).click();
 await page.locator('.result').waitFor();
-if (!(await page.locator('.result').innerText()).match(/allowed by bypass/i)) {
+if (!(await page.locator('.result').innerText()).match(/allowed by active bypass/i)) {
   throw new Error('Console did not present the bypassed preflight result');
 }
 const body = fixture.bypassed_transaction_xdr;

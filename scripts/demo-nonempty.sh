@@ -23,7 +23,7 @@ trap cleanup EXIT INT TERM
   exit 1
 }
 
-QS_DEMO_STATE_DIR="$STATE_DIR/engine" "$ENGINE_DIR/scripts/demo-nonempty.sh" --serve &
+(cd "$ENGINE_DIR" && QS_DEMO_STATE_DIR="$STATE_DIR/engine" ./scripts/demo-nonempty.sh --serve) &
 ENGINE_PID=$!
 until [[ -f "$STATE_DIR/engine/demo.env" ]]; do
   kill -0 "$ENGINE_PID" 2>/dev/null || { wait "$ENGINE_PID"; exit 1; }
