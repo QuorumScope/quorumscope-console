@@ -28,7 +28,7 @@ The repository includes:
 - **Web Console (`apps/web`)**: A Next.js application designed for operators, developers, and auditors.
 - **TypeScript SDK (`packages/sdk`)**: A typed client library wrapping the QuorumScope Engine OpenAPI contract.
 
-## Why it exists
+## Why QuorumScope exists
 
 When a ledger key is frozen on Stellar through CAP-77 quorum mechanisms, transactions attempting to modify or access that entry fail validation unless covered by a freeze bypass entry.
 
@@ -39,6 +39,12 @@ Developers and operators need:
 - Clear distinction between confirmed empty freeze sets, unverified protocol versions, and stale indexer states.
 
 QuorumScope Console provides this visibility without requiring operators to interact with low-level RPC outputs or SQL tables directly.
+
+## What QuorumScope is not
+
+The Console is not a general Stellar explorer, wallet, transaction sender, validator, replacement
+for Stellar Core, or generic monitoring dashboard. It is the operator and developer presentation
+layer for the CAP-77-aware Engine.
 
 ## Current staging status
 
@@ -54,7 +60,7 @@ Staging notes:
 - The staging console is deployed on Vercel and configured with `NEXT_PUBLIC_QUORUMSCOPE_API_BASE_URL=https://quorumscope-engine-api.onrender.com`.
 - The backing engine on Render runs on a free tier instance that sleeps during idle periods. Initial requests may take 30 to 60 seconds while the backend wakes up.
 - Testnet currently contains 0 frozen keys and 0 bypass entries.
-- Testnet reports Protocol 29 while the engine verifies up to Protocol 28. The console correctly presents an `unverified_protocol` warning badge across live pages.
+- Mainnet and Testnet report Protocol 29, and the Engine verifies the current CAP-77 compatibility surface through Protocol 29. Protocol 30 is upcoming and not active; the Console will continue to show a warning if the network moves beyond the Engine's verified maximum.
 
 ## Features
 
@@ -69,7 +75,7 @@ Staging notes:
 - **Preflight Transaction Sandbox**: In-browser candidate transaction evaluation with status badges, finding breakdowns, and clear explanations.
 - **Impact & Freeze Map**: Visual lane map grouping affected keys by kind alongside an evidence table with pagination and filters.
 - **Developer Examples**: Copy-ready code snippets for SDK integration, cURL queries, and error handling.
-- **TypeScript SDK (`@quorumscope/sdk`)**: Fully typed client generated from the engine OpenAPI 3.0 contract.
+- **TypeScript SDK (`@quorumscope/sdk`)**: Fully typed client generated from the engine OpenAPI 3.1.0 contract.
 - **OpenAPI Drift Verification**: Automated check ensuring TypeScript types match the engine API specification.
 - **Strict Privacy Controls**: Transaction XDR is sent directly from the browser to the engine; it never touches console server logs, storage, or external third parties.
 
@@ -244,7 +250,7 @@ Accessibility and design standards are verified across all routes:
 ## Limitations
 
 - **No Live Non-Empty Freeze Set**: Stellar Testnet currently holds 0 frozen keys. Non-empty freeze states, key histories, and impact data are verified via fixtures.
-- **No Deployed Lighthouse Rerun**: Lighthouse numbers on staging were affected by machine load and Render free tier wakeups; staging performance is unmeasured under idle conditions.
+- **Deployed Lighthouse Baseline**: Deployed staging Lighthouse was run, but some runs timed out or ran on a heavily loaded machine. A clean idle-machine deployed benchmark has not been completed, so those measurements are not a clean performance baseline.
 - **Render Free Tier Cold Starts**: When the backing engine sleeps, initial page loads may wait up to 60 seconds before receiving data.
 - **Screen Reader Review**: No manual screen reader review (e.g. NVDA, VoiceOver) was executed.
 - **DOM Renderer Component Tests**: React components are tested via Playwright browser runs and node unit tests rather than jsdom component renderers.
@@ -274,9 +280,21 @@ Core contribution policies:
 
 - Deployed Lighthouse benchmark rerun on an idle dedicated machine.
 - Manual screen reader review and assistive usability audit.
-- Protocol 29 interface enhancements once the engine verifies Protocol 29.
+- Protocol 30 interface readiness after network activation and Engine verification.
 - Visual regression baseline testing suite.
 - Copy-to-clipboard buttons for hashes, addresses, and XDR strings.
 - Formal npm registry publication for `@quorumscope/sdk`.
 
 For detailed release history and milestone planning, see [CHANGELOG.md](CHANGELOG.md) and [ROADMAP.md](ROADMAP.md).
+
+## Reproducible reviewer demo
+
+The [deterministic non-empty demo](https://github.com/QuorumScope/quorumscope-engine/blob/main/docs/demo.md)
+exercises a controlled CAP-77 RPC fixture through the real Engine, PostgreSQL, API, TypeScript SDK,
+and Console. It is explicitly synthetic and never presented as live Testnet state.
+
+From this repository, run it with the Engine checkout beside the Console:
+
+```sh
+QS_DEMO_ENGINE_DIR=../quorumscope-engine pnpm demo:nonempty
+```

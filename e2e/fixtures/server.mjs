@@ -17,7 +17,7 @@ const scenarios = {
   empty: { empty: true },
   stale: { freshness: { status: 'stale', observed_at: '2026-10-03T00:00:00Z' } },
   behind: { freshness: { status: 'indexing_behind', latest_network_ledger: 12400, ingestion_lag_ledgers: 55 } },
-  unverified: { freshness: { compatibility: 'unverified_protocol', current_protocol_version: 29 } },
+  unverified: { freshness: { compatibility: 'unverified_protocol', current_protocol_version: 30, verified_protocol_max: 29 } },
   unavailable: { down: true },
   slow: { delay: 1500 },
 };
@@ -33,8 +33,8 @@ function freshness() {
     observed_at: '2026-10-04T00:00:00Z',
     last_reconciled_ledger: 12345,
     last_reconciled_at: '2026-10-04T00:00:00Z',
-    current_protocol_version: 28,
-    verified_protocol_max: 28,
+    current_protocol_version: 29,
+    verified_protocol_max: 29,
     compatibility: 'verified',
     ...scenarios[scenario].freshness,
   };

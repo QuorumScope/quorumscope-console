@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Planned
 - Dedicated benchmark rerun for deployed staging on an idle testing host.
 - Manual assistive technology and screen reader usability audit.
-- Protocol 29 interface adaptations once the engine verifies Protocol 29.
+- Protocol 30 interface readiness after network activation and Engine verification.
 - Automated visual regression testing suite.
 
 ## [v0.1.0-staging] - 2026-10-07
@@ -25,7 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Preflight transaction sandbox providing in-browser envelope evaluation with finding breakdowns.
 - Impact analysis page featuring the interactive visual Freeze Map and paginated evidence tables.
 - Developer integration guide with code examples and cURL commands.
-- TypeScript SDK (`packages/sdk`) generated from the engine OpenAPI 3.0 specification.
+- TypeScript SDK (`packages/sdk`) generated from the engine OpenAPI 3.1.0 specification.
 - Contract drift check script verifying generated TypeScript types against the OpenAPI snapshot.
 - Automated browser E2E and accessibility test suite covering Playwright projects and axe-core checks.
 - Staging console deployment on Vercel: [Staging Console](https://quorumscope-console.vercel.app).
@@ -42,8 +42,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Known limitations
 - **No live non-empty freeze set observed**: Stellar Testnet currently contains 0 frozen keys. Non-empty freeze states, key histories, and impact data are verified using fixtures.
-- **Protocol 29 unverified warning**: Stellar Testnet reports Protocol 29, which exceeds the engine verified maximum of 28. The console correctly presents an `unverified_protocol` warning badge.
+- **Protocol boundary behavior**: The Console presents an `unverified_protocol` warning whenever the connected network exceeds the Engine's verified maximum. Current Protocol 29 is verified for the CAP-77 workflow; Protocol 30 remains upcoming.
 - **Render free tier sleep**: The backing engine on Render sleeps during inactivity. Initial page loads may take 30 to 60 seconds while the backend wakes up.
-- **No deployed Lighthouse clean rerun**: Staging Lighthouse performance numbers were affected by free tier cold starts and high local machine load; staging performance is unmeasured under idle conditions.
+- **Deployed Lighthouse limitation**: Staging Lighthouse was run, but some runs timed out or ran on a heavily loaded machine. A clean idle-machine deployed benchmark remains future work.
 - **No manual screen reader review**: While automated axe checks and scripted keyboard tests pass, no manual screen reader review was performed.
 - **No cursor pagination**: Pagination relies on page numbers because the engine API does not provide cursor-based navigation.

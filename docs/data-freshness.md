@@ -16,7 +16,7 @@ The console does not compute any of these. It does not show ledger close times, 
 ## What the console does with it
 
 - The freshness panel appears on the overview, network, status, frozen keys, bypasses, freeze episodes, impact, and preflight pages. Status is shown as text with a distinct mark and border, not by color alone.
-- When compatibility is `unverified_protocol`, a warning appears on those pages and on each preflight result. When it is `unknown`, the page says compatibility cannot be confirmed.
+- When compatibility is `unverified_protocol`, a warning appears on those pages and on each preflight result. When it is `unknown`, the page says compatibility cannot be confirmed. This remains the safety behavior for a future network protocol beyond the verified maximum.
 - "No active frozen keys" is written only when the engine reports zero keys and freshness is `current`. In any other state the page says the result is not a confirmation that nothing is frozen.
 - A preflight result of `clear` gets calm styling only when freshness is `current`. `state_unavailable` never gets success styling.
 

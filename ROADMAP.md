@@ -28,8 +28,8 @@ This roadmap documents planned features, testing improvements, and interface mil
 
 ## Long-term milestones
 
-### 4. Protocol 29 interface updates
-- Adapt user interface components once the engine formally verifies Protocol 29.
+### 4. Protocol 30 interface readiness
+- Review address and ledger-time presentation after Protocol 30 activation and Engine verification.
 - Remove unverified protocol badges when operating against verified networks.
 
 ### 5. Rich non-empty freeze demos

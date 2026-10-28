@@ -46,7 +46,7 @@ Engine settings the console depends on (set on the engine, see its README):
 | Variable | Why the console cares |
 | --- | --- |
 | `ALLOWED_ORIGINS` | Must contain the console origin. Without it the browser blocks the preflight request. |
-| `VERIFIED_PROTOCOL_MAX` | Decides whether the console shows the `unverified_protocol` warning. It defaults to 28. |
+| `VERIFIED_PROTOCOL_MAX` | Decides whether the console shows the `unverified_protocol` warning. The current Engine staging configuration uses 29. |
 | `STALE_AFTER_SEC`, `MAX_LAG_LEDGERS` | Decide when the freshness panel says `stale` or `indexing_behind`. |
 
 ## Content security policy

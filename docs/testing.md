@@ -23,10 +23,12 @@ The console, built with `NEXT_PUBLIC_QUORUMSCOPE_API_BASE_URL` set to a local en
 Observed:
 
 - Every page loaded without an error state.
-- The freshness panel showed `Current`, protocol 29 from testnet, a verified maximum of 28, and the `unverified_protocol` warning on every live page.
+- The freshness panel shows `Current`, protocol 29 from Testnet, and the Engine's verified maximum of 29 on live pages.
 - The overview and the frozen key list said no active frozen keys were reported at the source ledger, and only because freshness was `current`.
 - The Freeze Map was empty and said that an empty map says nothing about relationships or dependencies.
-- A preflight request with a synthetic transaction returned `clear`. Because the protocol is unverified, the result was not styled as confirmed.
+- A preflight request with a synthetic transaction returned `clear`. The Console still preserves its
+  safety styling rule for any future unverified protocol; the current Protocol 29 result is now
+  within the Engine's verified maximum.
 - The browser sent the transaction to the engine origin by POST. The console server received no transaction. It was not in the URL, local storage, session storage, or cookies. No POST went to any other origin, and no request left the console and engine origins.
 - The content security policy blocked a fetch to another origin and allowed the engine origin.
 
@@ -36,9 +38,11 @@ This live run found one defect that the fixture tests had not: a `clear` result 
 
 The deployed console at https://quorumscope-console.vercel.app, backed by the deployed engine and a Supabase database, showed in a real browser:
 
-- Current freshness, network protocol 29, verified maximum 28, and the `unverified_protocol` warning.
+- Current freshness, network protocol 29, and verified maximum 29.
 - "No active frozen keys" only because freshness was current, and empty keys, bypasses, freeze episodes, and impact pages.
-- A preflight request from the deployed console reached only the engine origin. The response was `clear`, not styled as confirmed because the protocol is unverified. The transaction was not in any URL, local storage, session storage, or cookie.
+- A preflight request from the deployed console reached only the engine origin. The response was
+  `clear` under the current verified Protocol 29 compatibility boundary. The transaction was not in
+  any URL, local storage, session storage, or cookie.
 - A content security policy whose `connect-src` is the console origin plus the engine origin, and the usual security headers.
 
 Not proven by the live runs: how the console and engine behave when the freeze set is non-empty. Testnet had no frozen keys, bypasses, or freeze episodes. Those states are covered only by fixture tests and by the engine repository's own tests.
@@ -104,7 +108,10 @@ What these numbers do and do not show:
 
 - Visual regression baselines. Screenshots depend on system fonts that differ between machines, so baselines would fail on other hosts. None are committed.
 - Screen reader testing, and review of every flow by a person using only a keyboard. See [accessibility.md](accessibility.md) for what was scripted and checked.
-- A Lighthouse run against a deployed site. Nothing is deployed.
+- A deployed staging Lighthouse run was performed and its real measurements are recorded above.
+  Some runs timed out or ran on a heavily loaded machine, and a clean idle-machine deployed
+  benchmark has not yet been completed. Treat the deployed numbers as observations, not as a clean
+  performance baseline.
 - Cursor pagination, because the engine does not offer it.
 - Component tests with a DOM renderer. The repository has no Vitest or React Testing Library setup. Browser tests cover the interactive components.
 

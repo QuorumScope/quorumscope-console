@@ -17,6 +17,8 @@ QuorumScope Console is the web interface and TypeScript SDK workspace for the Qu
 - [Known Limitations](limitations.md): Boundary conditions, testnet empty freeze sets, and infrastructure constraints.
 - [Protocol Versions](versions.md): Tracking verified protocol versions and upgrade paths.
 - [Release Notes](release-notes.md): Staging release notes for `v0.1.0-staging`.
+- [Deterministic Demo](https://github.com/QuorumScope/quorumscope-engine/blob/main/docs/demo.md): Reproducible non-empty fixture walkthrough.
+- [Differentiation](https://github.com/QuorumScope/quorumscope-engine/blob/main/docs/differentiation.md): Scope and adjacent-project comparison.
 
 ## Staging Endpoints
 

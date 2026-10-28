@@ -9,9 +9,11 @@ Stellar Testnet currently contains 0 frozen keys and 0 bypass entries. Consequen
 - Live network runs have observed only confirmed empty freeze sets.
 - Non-empty freeze states, key detail histories, and multi-key Freeze Map rendering are verified exclusively via fixture tests and mocked engine servers.
 
-### 2. Protocol 29 Compatibility Warning
-- Stellar Testnet operates on Protocol 29, whereas the engine is verified up to Protocol 28 (`VERIFIED_PROTOCOL_MAX=28`).
-- The console displays an `unverified_protocol` warning badge across all live pages. When preflight returns `clear` under this state, the result is intentionally not styled as confirmed.
+### 2. Protocol compatibility boundary
+- Stellar Mainnet and Testnet operate on Protocol 29, and the Engine verifies the current CAP-77
+  workflow through Protocol 29.
+- Protocol 30 is upcoming, not active. If the connected network reports a protocol above the
+  Engine's verified maximum, the Console displays an `unverified_protocol` warning across live pages.
 
 ### 3. Deployed Performance Benchmarks
 - The deployed console runs on Vercel and queries an engine hosted on Render free tier.

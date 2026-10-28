@@ -51,7 +51,7 @@ test('an unverified protocol shows a compatibility warning on live pages', async
   await scenario(request, 'unverified');
   for (const route of ['/', '/network', '/keys', '/preflight', '/status']) {
     await page.goto(route);
-    await expect(page.getByText(/has not verified compatibility with protocol 29/).first(), route).toBeVisible();
+    await expect(page.getByText(/has not verified compatibility with protocol 30/).first(), route).toBeVisible();
   }
 });
 
