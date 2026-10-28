@@ -10,7 +10,7 @@ A staging deployment exists. It runs against Stellar testnet and is not a produc
 | Engine API and indexer | https://quorumscope-engine-api.onrender.com (Render free web service) | Built from the engine's `Dockerfile`. One process group runs the indexer in the background and the API in the foreground. |
 | PostgreSQL | Supabase free project, session pooler | Supabase's direct host is IPv6 only and Render's free plan has no IPv6, so the engine uses the pooler host. |
 
-Settings in use: the console has `NEXT_PUBLIC_QUORUMSCOPE_API_BASE_URL` set to the engine URL above, and the engine has `ALLOWED_ORIGINS` set to the console URL and `VERIFIED_PROTOCOL_MAX=28`. The database URL is a secret held only in the Render service settings.
+Settings in use: the console has `NEXT_PUBLIC_QUORUMSCOPE_API_BASE_URL` set to the engine URL above, and the engine has `ALLOWED_ORIGINS` set to the console URL and `VERIFIED_PROTOCOL_MAX=29`. The database URL is a secret held only in the Render service settings.
 
 Limits of this staging setup:
 
