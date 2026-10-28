@@ -14,7 +14,7 @@ QuorumScope web console and TypeScript SDK for Stellar Quorum Freeze visibility,
 [![Testnet Connected](https://img.shields.io/badge/Testnet-Connected-success.svg)](https://quorumscope-console.vercel.app/network)
 [![Branch Protected](https://img.shields.io/badge/Branch_Protection-Active-success.svg)](https://github.com/QuorumScope/quorumscope-console/tree/main)
 
-[Documentation](https://quorumscope.github.io/quorumscope-console/) · [Staging Console](https://quorumscope-console.vercel.app) · [Staging API](https://quorumscope-engine-api.onrender.com) · [Latest Release](https://github.com/QuorumScope/quorumscope-console/releases/latest) · [Security](SECURITY.md) · [Contributing](CONTRIBUTING.md)
+[Documentation](https://quorumscope.github.io/quorumscope-console/) · [Staging Console](https://quorumscope-console.vercel.app) · [Staging API](https://quorumscope-engine-api.onrender.com) · [Latest Release](https://github.com/QuorumScope/quorumscope-console/releases/latest) · [Security](SECURITY.md) · [Contributing](CONTRIBUTING.md) · [Submission pack](docs/SUBMISSION-PACK.md)
 
 </div>
 
