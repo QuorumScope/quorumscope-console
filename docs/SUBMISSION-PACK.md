@@ -104,8 +104,8 @@ The staging Console is deployed at
 [https://quorumscope-console.vercel.app](https://quorumscope-console.vercel.app) and configured
 against the Engine's staging API.
 
-The Engine's Render free-tier staging instance may be suspended between billing cycles or asleep
-during idle periods. When the Engine is unreachable, the Console enters its documented
+The Engine's Render free-tier staging instance is not always-on and may sleep or become temporarily
+unavailable. When the Engine is unreachable, the Console enters its documented
 `unavailable` freshness state and reports that current state could not be retrieved rather than
 displaying stale or fabricated data. The Engine is not presented as live when it is not reachable.
 
