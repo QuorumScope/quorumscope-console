@@ -9,6 +9,7 @@ This hardening release aligns the Console with Engine Protocol 29 verification a
 - Added a deterministic cross-repository demo check using the real TypeScript SDK and Console routes.
 - Verified Engine OpenAPI 3.1.0 snapshot parity and updated protocol compatibility messaging.
 - Added Dependabot configuration for npm and GitHub Actions.
+- Updated Next.js to 16.4.3 to clear the production dependency advisories reported by CI.
 - Corrected deployed Lighthouse documentation and clarified the privacy boundary for browser-submitted preflight XDR.
 
 ### Honest status & constraints

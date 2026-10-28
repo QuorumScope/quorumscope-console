@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Updated Console compatibility messaging for verified Protocol 29 and upcoming Protocol 30.
 - Corrected the deployed Lighthouse record and aligned all OpenAPI references with the Engine's 3.1.0 contract.
+- Updated Next.js to 16.4.3 to clear the production dependency advisories reported by CI.
 
 ### Known limitations
 - Stellar Testnet still has no live non-empty freeze state observed by QuorumScope.
