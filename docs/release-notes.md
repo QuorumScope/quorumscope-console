@@ -1,5 +1,27 @@
 # Release Notes
 
+## Release v0.1.1-staging (2026-10-28)
+
+This hardening release aligns the Console with Engine Protocol 29 verification and adds a reproducible non-empty fixture demo path.
+
+### What changed
+
+- Added a deterministic cross-repository demo check using the real TypeScript SDK and Console routes.
+- Verified Engine OpenAPI 3.1.0 snapshot parity and updated protocol compatibility messaging.
+- Added Dependabot configuration for npm and GitHub Actions.
+- Corrected deployed Lighthouse documentation and clarified the privacy boundary for browser-submitted preflight XDR.
+
+### Honest status & constraints
+
+- **Current Stellar network protocol**: Protocol 29 on Mainnet and Testnet.
+- **QuorumScope verified maximum**: Protocol 29 for the CAP-77 workflow.
+- **Protocol 30**: Upcoming and not active; the Console preserves a visible warning for a network beyond the verified maximum.
+- **Live Testnet**: Testnet currently has no non-empty freeze state observed by QuorumScope.
+- **Deterministic demo**: The non-empty freeze demonstration is fixture data, explicitly not a live Testnet incident.
+- **Render free tier**: The backing Engine may sleep during inactivity; at review time its Render service was returning `Service Suspended`, so the deployed API requires a manual resume before use.
+- **Production readiness**: No production SLA is provided.
+- **Security audit**: No formal third-party security audit has been completed.
+
 ## Release v0.1.0-staging (2026-10-07)
 
 QuorumScope Console `v0.1.0-staging` marks the initial staging deployment of the web console and TypeScript SDK for Stellar Quorum Freeze visibility.

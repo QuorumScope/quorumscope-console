@@ -13,6 +13,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Protocol 30 interface readiness after network activation and Engine verification.
 - Automated visual regression testing suite.
 
+## [v0.1.1-staging] - 2026-10-28
+
+### Added
+- Deterministic cross-repository non-empty fixture demo using the TypeScript SDK, Console routes, and direct Engine preflight requests.
+- Dependabot maintenance configuration for npm and GitHub Actions.
+
+### Changed
+- Updated Console compatibility messaging for verified Protocol 29 and upcoming Protocol 30.
+- Corrected the deployed Lighthouse record and aligned all OpenAPI references with the Engine's 3.1.0 contract.
+
+### Known limitations
+- Stellar Testnet still has no live non-empty freeze state observed by QuorumScope.
+- The Render-backed Engine may sleep and was suspended at the time of this review; the Console has no production SLA.
+- No formal third-party security audit or manual screen-reader review has been completed.
+
 ## [v0.1.0-staging] - 2026-10-07
 
 ### Added
